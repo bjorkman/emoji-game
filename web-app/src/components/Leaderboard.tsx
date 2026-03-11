@@ -1,3 +1,4 @@
+import { Link } from 'react-router-dom';
 import { usePlayerStore } from '../store/playerStore';
 import shared from '../shared.module.css';
 import styles from './Leaderboard.module.css';
@@ -73,12 +74,17 @@ export default function Leaderboard({ gameId, gameTitle, latestId, onReplay }: P
         <p className={styles.rankNote}>You ranked #{playerRank} this time — keep going!</p>
       )}
 
-      <button
-        className={`${shared.btn} ${shared.btnSubmit} ${shared.btnReplay}`}
-        onClick={onReplay}
-      >
-        Play Again
-      </button>
+      <div className={styles.actions}>
+        <button
+          className={`${shared.btn} ${shared.btnSubmit} ${shared.btnReplay}`}
+          onClick={onReplay}
+        >
+          Play Again
+        </button>
+        <Link to="/" className={`${shared.btn} ${shared.btnSkip} ${styles.chooseGame}`}>
+          Choose Game
+        </Link>
+      </div>
     </div>
   );
 }

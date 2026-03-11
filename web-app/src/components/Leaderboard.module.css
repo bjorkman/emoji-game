@@ -96,3 +96,16 @@
   color: #8888aa;
   text-align: center;
 }
+
+.actions {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+  width: 100%;
+}
+
+.chooseGame {
+  text-decoration: none;
+  text-align: center;
+}
