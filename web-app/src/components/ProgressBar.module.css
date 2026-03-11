@@ -1,0 +1,29 @@
+/* ─── Progress Bar ─────────────────────────────────────── */
+.container {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.info {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.85rem;
+  color: #8888aa;
+}
+
+.track {
+  width: 100%;
+  height: 8px;
+  background: #1e1e33;
+  border-radius: 99px;
+  overflow: hidden;
+}
+
+.fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--color-secondary), var(--color-accent));
+  border-radius: 99px;
+  transition: width 0.4s ease;
+}

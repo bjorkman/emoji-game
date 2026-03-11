@@ -1,0 +1,256 @@
+/* ─── Page ─────────────────────────────────────────────── */
+.page {
+  width: 100%;
+  max-width: 560px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2rem;
+}
+
+/* ─── Header ───────────────────────────────────────────── */
+.header {
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.logo {
+  font-size: 2rem;
+  font-weight: 800;
+  color: #f0f0f5;
+}
+
+.playerRow {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+}
+
+.playerName {
+  font-size: 0.9rem;
+  color: #8888aa;
+}
+
+.changeBtn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 0.8rem;
+  color: #555577;
+  padding: 0;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+.changeBtn:hover {
+  color: #8888aa;
+}
+
+/* ─── Game picker grid ─────────────────────────────────── */
+.grid {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.card {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+  background: #14142a;
+  border: 1.5px solid #2a2a44;
+  border-radius: 16px;
+  padding: 1.5rem 1.75rem;
+  text-decoration: none;
+  color: inherit;
+  transition: border-color 0.15s, transform 0.15s;
+}
+
+.card:hover {
+  border-color: #4a4a66;
+  transform: translateY(-2px);
+}
+
+.cardTitle {
+  font-size: 1.4rem;
+  font-weight: 800;
+  color: #f0f0f5;
+}
+
+.cardTagline {
+  font-size: 0.9rem;
+  color: #8888aa;
+}
+
+.cardMeta {
+  font-size: 0.8rem;
+  color: #555577;
+  margin-top: 0.25rem;
+}
+
+.cardCta {
+  margin-top: 0.75rem;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #a0a0cc;
+}
+
+/* ─── Nickname gate ────────────────────────────────────── */
+.nicknameGate {
+  width: 100%;
+  max-width: 420px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.nicknameCard {
+  width: 100%;
+  background: #14142a;
+  border: 1.5px solid #2a2a44;
+  border-radius: 18px;
+  padding: 2.5rem 2rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.nicknameHeading {
+  font-size: 1.5rem;
+  font-weight: 800;
+  color: #f0f0f5;
+}
+
+.nicknameSubtext {
+  font-size: 0.9rem;
+  color: #8888aa;
+  margin-bottom: 0.5rem;
+}
+
+.nicknameForm {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  margin-top: 0.5rem;
+}
+
+.nicknameInput {
+  padding: 0.75rem 1rem;
+  border-radius: 10px;
+  border: 1.5px solid #2a2a44;
+  background: #0d0d1a;
+  color: #f0f0f5;
+  font-size: 1rem;
+  outline: none;
+  transition: border-color 0.15s;
+}
+
+.nicknameInput:focus {
+  border-color: #a78bfa;
+}
+
+.nicknameBtn {
+  cursor: pointer;
+  border: none;
+  border-radius: 10px;
+  background: linear-gradient(135deg, #a78bfa, #38bdf8);
+  color: #0d0d1a;
+  font-size: 1rem;
+  font-weight: 700;
+  padding: 0.75rem 1.4rem;
+  transition: opacity 0.15s;
+}
+
+.nicknameBtn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.nicknameBtn:not(:disabled):hover {
+  opacity: 0.88;
+}
+
+/* ─── High scores ──────────────────────────────────────── */
+.scoresSection {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.scoresHeading {
+  font-size: 0.85rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: #8888aa;
+}
+
+.scoresTableWrap {
+  overflow-x: auto;
+  border-radius: 12px;
+  border: 1px solid #2a2a44;
+}
+
+.scoresTable {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.88rem;
+}
+
+.scoresTable th {
+  text-align: left;
+  padding: 0.6rem 1rem;
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: #555577;
+  background: #0d0d1a;
+  border-bottom: 1px solid #2a2a44;
+}
+
+.scoresTable td {
+  padding: 0.65rem 1rem;
+  color: #c0c0d8;
+  border-bottom: 1px solid #1a1a2e;
+}
+
+.scoresTable tr:last-child td {
+  border-bottom: none;
+}
+
+.scoresTable tbody tr:hover td {
+  background: #14142a;
+}
+
+.scoreValue {
+  font-weight: 600;
+  color: #f0f0f5;
+  margin-right: 0.4rem;
+}
+
+.scorePct {
+  font-size: 0.8rem;
+  color: #8888aa;
+}
+
+.scoreDate {
+  color: #555577;
+  white-space: nowrap;
+}
+
+/* ─── Responsive ───────────────────────────────────────── */
+@media (min-width: 480px) {
+  .grid { display: grid; grid-template-columns: 1fr 1fr; }
+}
+
+@media (min-width: 768px) {
+  .page { max-width: 680px; }
+  .logo { font-size: 2.4rem; }
+}

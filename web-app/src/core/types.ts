@@ -1,0 +1,31 @@
+export type Difficulty = 'easy' | 'medium' | 'hard';
+export type Feedback = 'correct' | 'wrong' | null;
+
+export interface Question {
+  id: number;
+  answer: string;
+  clues: string[];
+  difficulty: Difficulty;
+  aliases: string[];
+}
+
+export interface Theme {
+  primary: string;
+  secondary: string;
+  secondaryRgb: string; // e.g. "167, 139, 250" — for use in rgba()
+  accent: string;
+  splashBg: string;
+}
+
+export interface GameConfig {
+  id: string;
+  title: string;
+  eyebrow: string;
+  tagline: string;
+  inputPlaceholder: string;
+  instructions: [string, string][];
+  grades: { min: number; label: string }[];
+  theme: Theme;
+  questions: Question[];
+  splashCards: { name: string; img: string }[];
+}
