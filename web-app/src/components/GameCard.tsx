@@ -1,4 +1,4 @@
-import { useEffect, useRef, type KeyboardEvent } from 'react';
+import { useEffect, useRef, useState, type KeyboardEvent } from 'react';
 import { type Question, type Difficulty, type Feedback } from '../core/types';
 import styles from './GameCard.module.css';
 import shared from '../shared.module.css';
@@ -9,6 +9,8 @@ const DIFFICULTY_CLASS: Record<Difficulty, string> = {
   medium: shared.difficultyMedium,
   hard:   shared.difficultyHard,
 };
+
+const HINT_DELAY_MS = 5000;
 
 interface Props {
   question: Question;
@@ -22,12 +24,21 @@ interface Props {
 
 export default function GameCard({ question, inputValue, onInputChange, onSubmit, onSkip, feedback, placeholder }: Props) {
   const inputRef = useRef<HTMLInputElement>(null);
+  const [hintVisible, setHintVisible] = useState(false);
 
   useEffect(() => {
     if (!feedback && inputRef.current) {
       inputRef.current.focus();
     }
   }, [feedback, question]);
+
+  // Reset and start hint timer on each new question
+  useEffect(() => {
+    setHintVisible(false);
+    if (!question.hint) return;
+    const timer = setTimeout(() => setHintVisible(true), HINT_DELAY_MS);
+    return () => clearTimeout(timer);
+  }, [question]);
 
   function handleKeyDown(e: KeyboardEvent<HTMLInputElement>) {
     if (e.key === 'Enter') onSubmit();
@@ -44,6 +55,12 @@ export default function GameCard({ question, inputValue, onInputChange, onSubmit
           <span key={i} className={styles.emoji}>{clue}</span>
         ))}
       </div>
+
+      {question.hint && (
+        <div className={`${styles.hint} ${hintVisible ? styles.hintVisible : ''}`} aria-live="polite">
+          💡 {question.hint}
+        </div>
+      )}
 
       <div className={styles.inputRow}>
         <input

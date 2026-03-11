@@ -25,6 +25,27 @@
   filter: drop-shadow(0 2px 8px rgba(var(--color-secondary-rgb), 0.4));
 }
 
+/* ─── Hint ─────────────────────────────────────────────── */
+.hint {
+  font-size: 0.85rem;
+  color: rgba(240, 240, 245, 0.45);
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 8px;
+  padding: 0.45rem 0.85rem;
+  text-align: center;
+  opacity: 0;
+  transform: translateY(-4px);
+  transition: opacity 0.5s ease, transform 0.5s ease;
+  pointer-events: none;
+}
+
+.hintVisible {
+  opacity: 1;
+  transform: translateY(0);
+  pointer-events: auto;
+}
+
 /* ─── Input Row ────────────────────────────────────────── */
 .inputRow {
   display: flex;

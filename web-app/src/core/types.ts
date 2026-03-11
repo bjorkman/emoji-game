@@ -7,6 +7,7 @@ export interface Question {
   clues: string[];
   difficulty: Difficulty;
   aliases: string[];
+  hint?: string;
 }
 
 export interface Theme {
