@@ -42,6 +42,13 @@ function NicknameGate() {
   );
 }
 
+function formatTime(seconds?: number): string {
+  if (seconds == null) return '—';
+  const m = Math.floor(seconds / 60);
+  const s = seconds % 60;
+  return `${m}:${s.toString().padStart(2, '0')}`;
+}
+
 function ScoresTable() {
   const highScores = usePlayerStore((s) => s.highScores);
   if (highScores.length === 0) return null;
@@ -58,6 +65,7 @@ function ScoresTable() {
               <th>Player</th>
               <th>Game</th>
               <th>Score</th>
+              <th>Time</th>
               <th>Date</th>
             </tr>
           </thead>
@@ -76,6 +84,7 @@ function ScoresTable() {
                     <span className={styles.scoreValue}>{entry.score}/{entry.total}</span>
                     <span className={styles.scorePct}>{pct}%</span>
                   </td>
+                  <td className={styles.scoreDate}>{formatTime(entry.duration)}</td>
                   <td className={styles.scoreDate}>{date}</td>
                 </tr>
               );

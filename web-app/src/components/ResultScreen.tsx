@@ -13,10 +13,10 @@ interface Props {
   total: number;
   missed: Question[];
   grades: { min: number; label: string }[];
-  onReplay: () => void;
+  onNext: () => void;
 }
 
-export default function ResultScreen({ score, total, missed, grades, onReplay }: Props) {
+export default function ResultScreen({ score, total, missed, grades, onNext }: Props) {
   const pct = Math.round((score / total) * 100);
   const grade = grades.find(g => pct >= g.min)?.label ?? '';
 
@@ -31,7 +31,7 @@ export default function ResultScreen({ score, total, missed, grades, onReplay }:
 
       {missed.length > 0 && (
         <div className={styles.missedSection}>
-          <h3>Missed groups</h3>
+          <h3>Missed</h3>
           <ul className={styles.missedList}>
             {missed.map(q => (
               <li key={q.id} className={styles.missedItem}>
@@ -44,8 +44,8 @@ export default function ResultScreen({ score, total, missed, grades, onReplay }:
         </div>
       )}
 
-      <button className={`${shared.btn} ${shared.btnSubmit} ${shared.btnReplay}`} onClick={onReplay}>
-        Play Again
+      <button className={`${shared.btn} ${shared.btnSubmit} ${shared.btnReplay}`} onClick={onNext}>
+        View Leaderboard →
       </button>
     </div>
   );

@@ -6,10 +6,11 @@ import GameCard from '../components/GameCard';
 import FeedbackBanner from '../components/FeedbackBanner';
 import ProgressBar from '../components/ProgressBar';
 import ResultScreen from '../components/ResultScreen';
+import Leaderboard from '../components/Leaderboard';
 import SplashScreen from '../components/SplashScreen';
 import styles from './Game.module.css';
 
-type Phase = 'start' | 'playing' | 'result';
+type Phase = 'start' | 'playing' | 'result' | 'leaderboard';
 
 interface Props {
   config: GameConfig;
@@ -23,9 +24,13 @@ export default function Game({ config }: Props) {
   const [missed, setMissed] = useState<Question[]>([]);
   const [inputValue, setInputValue] = useState('');
   const [feedback, setFeedback] = useState<Feedback>(null);
+  const [elapsed, setElapsed] = useState(0);
+  const [latestScoreId, setLatestScoreId] = useState('');
 
-  // Ref mirrors score state so setTimeout closures always see the latest value
-  const scoreRef = useRef(0);
+  // Refs mirror state so setTimeout closures always read the latest value
+  const scoreRef   = useRef(0);
+  const elapsedRef = useRef(0);
+  const timerRef   = useRef<ReturnType<typeof setInterval> | null>(null);
 
   const { nickname, addScore } = usePlayerStore();
 
@@ -39,15 +44,32 @@ export default function Game({ config }: Props) {
     root.style.setProperty('--color-splash-bg',     splashBg);
   }, [config.theme]);
 
+  // Clean up timer on unmount
+  useEffect(() => () => { if (timerRef.current) clearInterval(timerRef.current); }, []);
+
+  function stopTimer() {
+    if (timerRef.current !== null) {
+      clearInterval(timerRef.current);
+      timerRef.current = null;
+    }
+  }
+
   const startGame = useCallback(() => {
-    scoreRef.current = 0;
+    stopTimer();
+    scoreRef.current   = 0;
+    elapsedRef.current = 0;
     setScore(0);
+    setElapsed(0);
     setDeck(shuffle(config.questions));
     setCurrentIndex(0);
     setMissed([]);
     setInputValue('');
     setFeedback(null);
     setPhase('playing');
+    timerRef.current = setInterval(() => {
+      elapsedRef.current += 1;
+      setElapsed(elapsedRef.current);
+    }, 1000);
   }, [config.questions]);
 
   const advance = useCallback((wasCorrect: boolean, question: Question) => {
@@ -56,12 +78,17 @@ export default function Game({ config }: Props) {
     const delay = wasCorrect ? 1000 : 2000;
     if (nextIndex >= deck.length) {
       setTimeout(() => {
+        stopTimer();
+        const id = crypto.randomUUID();
+        setLatestScoreId(id);
         addScore({
+          id,
           gameId:    config.id,
           gameTitle: config.title,
           nickname:  nickname ?? 'Anonymous',
           score:     scoreRef.current,
           total:     deck.length,
+          duration:  elapsedRef.current,
         });
         setPhase('result');
         setFeedback(null);
@@ -95,6 +122,8 @@ export default function Game({ config }: Props) {
   }, [feedback, deck, currentIndex, advance]);
 
   const cancelGame = useCallback(() => {
+    stopTimer();
+    setElapsed(0);
     setFeedback(null);
     setPhase('start');
   }, []);
@@ -120,6 +149,19 @@ export default function Game({ config }: Props) {
           total={config.questions.length}
           missed={missed}
           grades={config.grades}
+          onNext={() => setPhase('leaderboard')}
+        />
+      </div>
+    );
+  }
+
+  if (phase === 'leaderboard') {
+    return (
+      <div className={styles.app}>
+        <Leaderboard
+          gameId={config.id}
+          gameTitle={config.title}
+          latestId={latestScoreId}
           onReplay={startGame}
         />
       </div>
@@ -138,6 +180,7 @@ export default function Game({ config }: Props) {
         current={currentIndex + 1}
         total={deck.length}
         score={score}
+        elapsed={elapsed}
       />
       <FeedbackBanner feedback={feedback} correctAnswer={currentQuestion.answer} />
       <GameCard
