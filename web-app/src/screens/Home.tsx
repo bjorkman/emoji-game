@@ -13,17 +13,12 @@ function NicknameGate() {
   const setNickname = usePlayerStore((s) => s.setNickname);
   const [value, setValue] = useState('');
 
-  function handleSubmit(e: SubmitEvent) {
-    e.preventDefault();
-    if (value.trim()) setNickname(value);
-  }
-
   return (
     <div className={nicknameGate}>
       <div className={nicknameCard}>
         <h2 className={nicknameHeading}>What's your name?</h2>
         <p className={nicknameSubtext}>We'll remember it for next time.</p>
-        <form className={nicknameForm} onSubmit={handleSubmit}>
+        <form className={nicknameForm} onSubmit={(e) => { e.preventDefault(); if (value.trim()) setNickname(value); }}>
           <input
             className={nicknameInput}
             type="text"
