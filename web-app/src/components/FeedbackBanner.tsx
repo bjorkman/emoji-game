@@ -1,18 +1,16 @@
 import { type Feedback } from '../core/types';
-import styles from './FeedbackBanner.module.css';
+import { feedbackCorrect, feedbackWrong } from './FeedbackBanner.css';
 
 interface Props {
   feedback: Feedback;
   correctAnswer: string;
 }
 
-export default function FeedbackBanner({ feedback, correctAnswer }: Props) {
+export default function FeedbackBanner({ feedback, correctAnswer }: Readonly<Props>) {
   if (!feedback) return null;
 
-  const variantClass = feedback === 'correct' ? styles.feedbackCorrect : styles.feedbackWrong;
-
   return (
-    <div className={`${styles.feedbackBanner} ${variantClass}`}>
+    <div className={feedback === 'correct' ? feedbackCorrect : feedbackWrong}>
       {feedback === 'correct' ? (
         <span>Correct! 🎉</span>
       ) : (

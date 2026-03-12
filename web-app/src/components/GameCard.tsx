@@ -1,13 +1,13 @@
 import { useEffect, useRef, useState, type KeyboardEvent } from 'react';
 import { type Question, type Difficulty, type Feedback } from '../core/types';
-import styles from './GameCard.module.css';
-import shared from '../shared.module.css';
+import { card, emojiDisplay, emoji, hint, hintActive, inputRow, guessInput } from './GameCard.css';
+import { btnSubmit, btnSkip, difficultyEasy, difficultyMedium, difficultyHard } from '../shared.css';
 
 const DIFFICULTY_LABELS: Record<Difficulty, string> = { easy: 'Easy', medium: 'Medium', hard: 'Hard' };
 const DIFFICULTY_CLASS: Record<Difficulty, string> = {
-  easy:   shared.difficultyEasy,
-  medium: shared.difficultyMedium,
-  hard:   shared.difficultyHard,
+  easy:   difficultyEasy,
+  medium: difficultyMedium,
+  hard:   difficultyHard,
 };
 
 const HINT_DELAY_MS = 5000;
@@ -22,7 +22,7 @@ interface Props {
   placeholder: string;
 }
 
-export default function GameCard({ question, inputValue, onInputChange, onSubmit, onSkip, feedback, placeholder }: Props) {
+export default function GameCard({ question, inputValue, onInputChange, onSubmit, onSkip, feedback, placeholder }: Readonly<Props>) {
   const inputRef = useRef<HTMLInputElement>(null);
   const [hintQuestionId, setHintQuestionId] = useState<number | null>(null);
   const hintVisible = hintQuestionId === question.id;
@@ -45,24 +45,24 @@ export default function GameCard({ question, inputValue, onInputChange, onSubmit
   }
 
   return (
-    <div className={styles.card}>
-      <div className={`${shared.difficultyBadge} ${DIFFICULTY_CLASS[question.difficulty]}`}>
+    <div className={card}>
+      <div className={DIFFICULTY_CLASS[question.difficulty]}>
         {DIFFICULTY_LABELS[question.difficulty]}
       </div>
 
-      <div className={styles.emojiDisplay}>
+      <div className={emojiDisplay}>
         {question.clues.map((clue, i) => (
-          <span key={i} className={styles.emoji}>{clue}</span>
+          <span key={'question-' + i} className={emoji}>{clue}</span>
         ))}
       </div>
 
       {question.hint && (
-        <div className={`${styles.hint} ${hintVisible ? styles.hintVisible : ''}`} aria-live="polite">
+        <div className={hintVisible ? hintActive : hint} aria-live="polite">
           💡 {question.hint}
         </div>
       )}
 
-      <div className={styles.inputRow}>
+      <div className={inputRow}>
         <input
           ref={inputRef}
           type="text"
@@ -71,14 +71,14 @@ export default function GameCard({ question, inputValue, onInputChange, onSubmit
           onKeyDown={handleKeyDown}
           placeholder={placeholder}
           disabled={!!feedback}
-          className={styles.guessInput}
+          className={guessInput}
           autoComplete="off"
           spellCheck={false}
         />
         <button
           onClick={onSubmit}
           disabled={!!feedback || !inputValue.trim()}
-          className={`${shared.btn} ${shared.btnSubmit}`}
+          className={btnSubmit}
         >
           Submit
         </button>
@@ -87,7 +87,7 @@ export default function GameCard({ question, inputValue, onInputChange, onSubmit
       <button
         onClick={onSkip}
         disabled={!!feedback}
-        className={`${shared.btn} ${shared.btnSkip}`}
+        className={btnSkip}
       >
         Skip
       </button>

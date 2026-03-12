@@ -1,7 +1,7 @@
 import { Link } from 'react-router-dom';
 import { usePlayerStore } from '../store/playerStore';
-import shared from '../shared.module.css';
-import styles from './Leaderboard.module.css';
+import { btnReplay } from '../shared.css';
+import { screen, heading, empty, tableWrap, table, highlight, rank, scoreVal, scorePct, time, rankNote, actions, chooseGame } from './Leaderboard.css';
 
 function formatTime(seconds?: number): string {
   if (seconds == null) return '—';
@@ -17,7 +17,7 @@ interface Props {
   onReplay: () => void;
 }
 
-export default function Leaderboard({ gameId, gameTitle, latestId, onReplay }: Props) {
+export default function Leaderboard({ gameId, gameTitle, latestId, onReplay }: Readonly<Props>) {
   const highScores = usePlayerStore((s) => s.highScores);
 
   const sorted = highScores
@@ -32,14 +32,14 @@ export default function Leaderboard({ gameId, gameTitle, latestId, onReplay }: P
   const inTop10 = playerRank >= 1 && playerRank <= 10;
 
   return (
-    <div className={styles.screen}>
-      <h2 className={styles.heading}>{gameTitle} — Leaderboard</h2>
+    <div className={screen}>
+      <h2 className={heading}>{gameTitle} — Leaderboard</h2>
 
       {top10.length === 0 ? (
-        <p className={styles.empty}>No scores yet.</p>
+        <p className={empty}>No scores yet.</p>
       ) : (
-        <div className={styles.tableWrap}>
-          <table className={styles.table}>
+        <div className={tableWrap}>
+          <table className={table}>
             <thead>
               <tr>
                 <th>#</th>
@@ -52,17 +52,17 @@ export default function Leaderboard({ gameId, gameTitle, latestId, onReplay }: P
               {top10.map((entry, i) => (
                 <tr
                   key={entry.id}
-                  className={entry.id === latestId ? styles.highlight : undefined}
+                  className={entry.id === latestId ? highlight : undefined}
                 >
-                  <td className={styles.rank}>{i + 1}</td>
+                  <td className={rank}>{i + 1}</td>
                   <td>{entry.nickname}</td>
                   <td>
-                    <span className={styles.scoreVal}>{entry.score}/{entry.total}</span>
-                    <span className={styles.scorePct}>
+                    <span className={scoreVal}>{entry.score}/{entry.total}</span>
+                    <span className={scorePct}>
                       {Math.round((entry.score / entry.total) * 100)}%
                     </span>
                   </td>
-                  <td className={styles.time}>{formatTime(entry.duration)}</td>
+                  <td className={time}>{formatTime(entry.duration)}</td>
                 </tr>
               ))}
             </tbody>
@@ -71,17 +71,14 @@ export default function Leaderboard({ gameId, gameTitle, latestId, onReplay }: P
       )}
 
       {!inTop10 && playerRank > 0 && (
-        <p className={styles.rankNote}>You ranked #{playerRank} this time — keep going!</p>
+        <p className={rankNote}>You ranked #{playerRank} this time — keep going!</p>
       )}
 
-      <div className={styles.actions}>
-        <button
-          className={`${shared.btn} ${shared.btnSubmit} ${shared.btnReplay}`}
-          onClick={onReplay}
-        >
+      <div className={actions}>
+        <button className={btnReplay} onClick={onReplay}>
           Play Again
         </button>
-        <Link to="/" className={`${shared.btn} ${shared.btnSkip} ${styles.chooseGame}`}>
+        <Link to="/" className={chooseGame}>
           Choose Game
         </Link>
       </div>

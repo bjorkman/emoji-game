@@ -9,7 +9,7 @@ import ProgressBar from '../components/ProgressBar';
 import ResultScreen from '../components/ResultScreen';
 import Leaderboard from '../components/Leaderboard';
 import SplashScreen from '../components/SplashScreen';
-import styles from './Game.module.css';
+import { app, header, cancelBtn, titleSmall } from './Game.css';
 
 type Phase = 'start' | 'playing' | 'result' | 'leaderboard';
 
@@ -17,7 +17,7 @@ interface Props {
   config: GameConfig;
 }
 
-export default function Game({ config }: Props) {
+export default function Game({ config }: Readonly<Props>) {
   const [phase, setPhase] = useState<Phase>('start');
   const [deck, setDeck] = useState<Question[]>([]);
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -146,7 +146,7 @@ export default function Game({ config }: Props) {
 
   if (phase === 'result') {
     return (
-      <div className={styles.app}>
+      <div className={app}>
         <ResultScreen
           score={score}
           total={config.questions.length}
@@ -160,7 +160,7 @@ export default function Game({ config }: Props) {
 
   if (phase === 'leaderboard') {
     return (
-      <div className={styles.app}>
+      <div className={app}>
         <Leaderboard
           gameId={config.id}
           gameTitle={config.title}
@@ -174,10 +174,10 @@ export default function Game({ config }: Props) {
   const currentQuestion = deck[currentIndex];
 
   return (
-    <div className={styles.app}>
-      <div className={styles.header}>
-        <h1 className={`${styles.title} ${styles.titleSmall}`}>{config.title}</h1>
-        <button className={styles.cancelBtn} onClick={cancelGame} aria-label="Quit game">✕</button>
+    <div className={app}>
+      <div className={header}>
+        <h1 className={titleSmall}>{config.title}</h1>
+        <button className={cancelBtn} onClick={cancelGame} aria-label="Quit game">✕</button>
       </div>
       <ProgressBar
         current={currentIndex + 1}

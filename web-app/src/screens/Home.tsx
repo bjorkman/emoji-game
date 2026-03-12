@@ -1,26 +1,31 @@
-import { useState, type FormEvent } from 'react';
+import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import REGISTRY from '../games/registry';
 import { usePlayerStore } from '../store/playerStore';
-import styles from './Home.module.css';
+import {
+  page, header, logo, playerRow, playerName, changeBtn,
+  grid, card, cardTitle, cardTagline, cardMeta, cardCta,
+  nicknameGate, nicknameCard, nicknameHeading, nicknameSubtext, nicknameForm, nicknameInput, nicknameBtn,
+  scoresSection, scoresHeading, scoresTableWrap, scoresTable, scoreValue, scorePct, scoreDate,
+} from './Home.css';
 
 function NicknameGate() {
   const setNickname = usePlayerStore((s) => s.setNickname);
   const [value, setValue] = useState('');
 
-  function handleSubmit(e: FormEvent) {
+  function handleSubmit(e: SubmitEvent) {
     e.preventDefault();
     if (value.trim()) setNickname(value);
   }
 
   return (
-    <div className={styles.nicknameGate}>
-      <div className={styles.nicknameCard}>
-        <h2 className={styles.nicknameHeading}>What's your name?</h2>
-        <p className={styles.nicknameSubtext}>We'll remember it for next time.</p>
-        <form className={styles.nicknameForm} onSubmit={handleSubmit}>
+    <div className={nicknameGate}>
+      <div className={nicknameCard}>
+        <h2 className={nicknameHeading}>What's your name?</h2>
+        <p className={nicknameSubtext}>We'll remember it for next time.</p>
+        <form className={nicknameForm} onSubmit={handleSubmit}>
           <input
-            className={styles.nicknameInput}
+            className={nicknameInput}
             type="text"
             placeholder="Enter a nickname…"
             value={value}
@@ -30,7 +35,7 @@ function NicknameGate() {
             autoComplete="off"
           />
           <button
-            className={styles.nicknameBtn}
+            className={nicknameBtn}
             type="submit"
             disabled={!value.trim()}
           >
@@ -56,10 +61,10 @@ function ScoresTable() {
   const recent = highScores.slice(0, 10);
 
   return (
-    <section className={styles.scoresSection}>
-      <h2 className={styles.scoresHeading}>Recent Scores</h2>
-      <div className={styles.scoresTableWrap}>
-        <table className={styles.scoresTable}>
+    <section className={scoresSection}>
+      <h2 className={scoresHeading}>Recent Scores</h2>
+      <div className={scoresTableWrap}>
+        <table className={scoresTable}>
           <thead>
             <tr>
               <th>Player</th>
@@ -81,11 +86,11 @@ function ScoresTable() {
                   <td>{entry.nickname}</td>
                   <td>{entry.gameTitle}</td>
                   <td>
-                    <span className={styles.scoreValue}>{entry.score}/{entry.total}</span>
-                    <span className={styles.scorePct}>{pct}%</span>
+                    <span className={scoreValue}>{entry.score}/{entry.total}</span>
+                    <span className={scorePct}>{pct}%</span>
                   </td>
-                  <td className={styles.scoreDate}>{formatTime(entry.duration)}</td>
-                  <td className={styles.scoreDate}>{date}</td>
+                  <td className={scoreDate}>{formatTime(entry.duration)}</td>
+                  <td className={scoreDate}>{date}</td>
                 </tr>
               );
             })}
@@ -103,13 +108,13 @@ export default function Home() {
   if (!nickname?.trim()) return <NicknameGate />;
 
   return (
-    <div className={styles.page}>
-      <header className={styles.header}>
-        <h1 className={styles.logo}>🎮 Emoji Games</h1>
-        <div className={styles.playerRow}>
-          <span className={styles.playerName}>Playing as {nickname}</span>
+    <div className={page}>
+      <header className={header}>
+        <h1 className={logo}>🎮 Emoji Games</h1>
+        <div className={playerRow}>
+          <span className={playerName}>Playing as {nickname}</span>
           <button
-            className={styles.changeBtn}
+            className={changeBtn}
             onClick={() => setNickname('')}
           >
             change
@@ -117,13 +122,13 @@ export default function Home() {
         </div>
       </header>
 
-      <div className={styles.grid}>
+      <div className={grid}>
         {games.map((game) => (
-          <Link key={game.id} to={`/${game.id}`} className={styles.card}>
-            <div className={styles.cardTitle}>{game.title}</div>
-            <div className={styles.cardTagline}>{game.tagline}</div>
-            <div className={styles.cardMeta}>{game.questions.length} questions · 3 difficulties</div>
-            <div className={styles.cardCta}>Play →</div>
+          <Link key={game.id} to={`/${game.id}`} className={card}>
+            <div className={cardTitle}>{game.title}</div>
+            <div className={cardTagline}>{game.tagline}</div>
+            <div className={cardMeta}>{game.questions.length} questions · 3 difficulties</div>
+            <div className={cardCta}>Play →</div>
           </Link>
         ))}
       </div>
