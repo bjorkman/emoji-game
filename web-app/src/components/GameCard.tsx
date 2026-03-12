@@ -24,7 +24,8 @@ interface Props {
 
 export default function GameCard({ question, inputValue, onInputChange, onSubmit, onSkip, feedback, placeholder }: Props) {
   const inputRef = useRef<HTMLInputElement>(null);
-  const [hintVisible, setHintVisible] = useState(false);
+  const [hintQuestionId, setHintQuestionId] = useState<number | null>(null);
+  const hintVisible = hintQuestionId === question.id;
 
   useEffect(() => {
     if (!feedback && inputRef.current) {
@@ -32,11 +33,10 @@ export default function GameCard({ question, inputValue, onInputChange, onSubmit
     }
   }, [feedback, question]);
 
-  // Reset and start hint timer on each new question
+  // Start hint timer on each new question; visibility resets automatically when question changes
   useEffect(() => {
-    setHintVisible(false);
     if (!question.hint) return;
-    const timer = setTimeout(() => setHintVisible(true), HINT_DELAY_MS);
+    const timer = setTimeout(() => setHintQuestionId(question.id), HINT_DELAY_MS);
     return () => clearTimeout(timer);
   }, [question]);
 

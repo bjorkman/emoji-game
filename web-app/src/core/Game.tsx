@@ -1,4 +1,5 @@
 import { useState, useCallback, useEffect, useRef } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { type GameConfig, type Question, type Feedback } from './types';
 import { shuffle, isCorrect } from './gameLogic';
 import { usePlayerStore } from '../store/playerStore';
@@ -32,6 +33,7 @@ export default function Game({ config }: Props) {
   const elapsedRef = useRef(0);
   const timerRef   = useRef<ReturnType<typeof setInterval> | null>(null);
 
+  const navigate = useNavigate();
   const { nickname, addScore } = usePlayerStore();
 
   useEffect(() => {
@@ -137,6 +139,7 @@ export default function Game({ config }: Props) {
         instructions={config.instructions}
         cards={config.splashCards}
         onPlay={startGame}
+        onChooseGame={() => navigate('/')}
       />
     );
   }

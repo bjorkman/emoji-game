@@ -12,6 +12,7 @@ interface Props {
   instructions: [string, string][];
   cards: SplashCard[];
   onPlay: () => void;
+  onChooseGame: () => void;
 }
 
 function IdolCard({ card }: { card: SplashCard }) {
@@ -24,7 +25,7 @@ function IdolCard({ card }: { card: SplashCard }) {
   );
 }
 
-export default function SplashScreen({ title, eyebrow, tagline, instructions, cards, onPlay }: Props) {
+export default function SplashScreen({ title, eyebrow, tagline, instructions, cards, onPlay, onChooseGame }: Props) {
   const hasTicker = cards.length > 0;
   const mid = Math.ceil(cards.length / 2);
   const ROW1 = hasTicker ? [...cards.slice(0, mid), ...cards.slice(0, mid)] : [];
@@ -69,6 +70,10 @@ export default function SplashScreen({ title, eyebrow, tagline, instructions, ca
         <button className={styles.btnPlay} onClick={onPlay}>
           <span>Play Now</span>
           <span className={styles.btnPlayArrow}>→</span>
+        </button>
+
+        <button className={styles.btnChoose} onClick={onChooseGame}>
+          ← Choose Game
         </button>
       </div>
 

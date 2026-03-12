@@ -222,3 +222,22 @@
 .btnPlay:hover .btnPlayArrow {
   transform: translateX(4px);
 }
+
+/* ─── Choose Game Button ───────────────────────────────── */
+.btnChoose {
+  cursor: pointer;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 99px;
+  background: transparent;
+  color: #8888bb;
+  font-size: 0.85rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  padding: 0.55rem 1.5rem;
+  transition: color 0.2s ease, border-color 0.2s ease;
+}
+
+.btnChoose:hover {
+  color: #f0f0f5;
+  border-color: rgba(255, 255, 255, 0.3);
+}
