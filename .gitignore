@@ -4,5 +4,5 @@ dist/
 *.local
 .idea/
 *.iml
-.claude/
+.claude/settings.local.json
 .vite/
