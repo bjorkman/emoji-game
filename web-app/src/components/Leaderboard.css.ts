@@ -113,3 +113,35 @@ export const chooseGame = style([btnSkip, {
   textDecoration: 'none',
   textAlign: 'center',
 }]);
+
+export const tabs = style({
+  display: 'flex',
+  gap: '0.25rem',
+  background: '#0d0d1a',
+  border: '1px solid #2a2a44',
+  borderRadius: 10,
+  padding: '0.25rem',
+  width: '100%',
+});
+
+const baseTab = style({
+  flex: 1,
+  border: 'none',
+  borderRadius: 7,
+  cursor: 'pointer',
+  fontSize: '0.82rem',
+  fontWeight: 600,
+  padding: '0.4rem 0',
+  transition: 'background 0.15s, color 0.15s',
+});
+
+export const tab = style([baseTab, {
+  background: 'transparent',
+  color: '#555577',
+  ':hover': { color: '#8888aa' },
+}]);
+
+export const tabActive = style([baseTab, {
+  background: 'rgba(var(--color-secondary-rgb), 0.18)',
+  color: '#f0f0f5',
+}]);

@@ -73,3 +73,43 @@ export const missedName = style({
   flex: 1,
   fontWeight: 600,
 });
+
+export const challengeWrap = style({
+  display: 'flex',
+  flexDirection: 'column',
+  alignItems: 'center',
+  gap: '0.5rem',
+  width: '100%',
+});
+
+export const challengeHint = style({
+  fontSize: '0.85rem',
+  color: '#8888aa',
+});
+
+export const challengeCode = style({
+  display: 'flex',
+  alignItems: 'center',
+  gap: '0.75rem',
+  background: '#14142a',
+  border: '1.5px solid #2a2a44',
+  borderRadius: 10,
+  padding: '0.6rem 1.25rem',
+  fontFamily: 'monospace',
+  fontSize: '1.2rem',
+  fontWeight: 700,
+  letterSpacing: '0.1em',
+  color: '#f0f0f5',
+});
+
+export const challengeCopyBtn = style({
+  background: 'rgba(var(--color-secondary-rgb), 0.15)',
+  border: '1px solid rgba(var(--color-secondary-rgb), 0.3)',
+  borderRadius: 6,
+  color: '#c0c0d8',
+  cursor: 'pointer',
+  fontSize: '0.8rem',
+  fontWeight: 600,
+  padding: '0.25rem 0.6rem',
+  ':hover': { background: 'rgba(var(--color-secondary-rgb), 0.25)' },
+});

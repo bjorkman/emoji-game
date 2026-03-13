@@ -52,6 +52,16 @@ export const changeBtn = style({
   ':hover': { color: '#8888aa' },
 });
 
+export const friendsLink = style({
+  fontSize: '0.8rem',
+  color: '#8888aa',
+  textDecoration: 'none',
+  padding: '0.15rem 0.5rem',
+  borderRadius: 6,
+  border: '1px solid #2a2a44',
+  ':hover': { borderColor: '#4a4a66', color: '#f0f0f5' },
+});
+
 export const grid = style({
   width: '100%',
   display: 'flex',
@@ -234,4 +244,61 @@ export const scorePct = style({
 export const scoreDate = style({
   color: '#555577',
   whiteSpace: 'nowrap',
+});
+
+export const challengeSection = style({
+  width: '100%',
+  display: 'flex',
+  flexDirection: 'column',
+  gap: '0.6rem',
+});
+
+export const challengeHeading = style({
+  fontSize: '0.85rem',
+  fontWeight: 700,
+  textTransform: 'uppercase',
+  letterSpacing: '0.08em',
+  color: '#8888aa',
+});
+
+export const challengeRow = style({
+  display: 'flex',
+  gap: '0.5rem',
+});
+
+export const challengeInput = style({
+  flex: 1,
+  padding: '0.65rem 1rem',
+  borderRadius: 10,
+  border: '1.5px solid #2a2a44',
+  background: '#0d0d1a',
+  color: '#f0f0f5',
+  fontSize: '0.9rem',
+  fontFamily: 'monospace',
+  textTransform: 'uppercase',
+  outline: 'none',
+  transition: 'border-color 0.15s',
+  ':focus': { borderColor: 'var(--color-secondary)' },
+});
+
+export const challengeJoinBtn = style({
+  cursor: 'pointer',
+  border: 'none',
+  borderRadius: 10,
+  background: 'linear-gradient(135deg, var(--color-primary), var(--color-accent))',
+  color: '#fff',
+  fontSize: '0.9rem',
+  fontWeight: 700,
+  padding: '0.65rem 1.2rem',
+  whiteSpace: 'nowrap',
+  transition: 'opacity 0.15s',
+  ':disabled': { opacity: 0.4, cursor: 'not-allowed' },
+  selectors: {
+    '&:not(:disabled):hover': { opacity: 0.88 },
+  },
+});
+
+export const challengeError = style({
+  fontSize: '0.82rem',
+  color: '#f87171',
 });

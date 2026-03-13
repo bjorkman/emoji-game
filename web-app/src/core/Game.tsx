@@ -3,6 +3,8 @@ import { useNavigate } from 'react-router-dom';
 import { type GameConfig, type Question, type Feedback } from './types';
 import { shuffle, isCorrect } from './gameLogic';
 import { usePlayerStore } from '../store/playerStore';
+import { useAuthStore } from '../store/authStore';
+import { submitScore } from '../lib/db';
 import GameCard from '../components/GameCard';
 import FeedbackBanner from '../components/FeedbackBanner';
 import ProgressBar from '../components/ProgressBar';
@@ -15,9 +17,10 @@ type Phase = 'start' | 'playing' | 'result' | 'leaderboard';
 
 interface Props {
   config: GameConfig;
+  challengeId?: string; // set when joining via challenge code
 }
 
-export default function Game({ config }: Readonly<Props>) {
+export default function Game({ config, challengeId }: Readonly<Props>) {
   const [phase, setPhase] = useState<Phase>('start');
   const [deck, setDeck] = useState<Question[]>([]);
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -27,6 +30,7 @@ export default function Game({ config }: Readonly<Props>) {
   const [feedback, setFeedback] = useState<Feedback>(null);
   const [elapsed, setElapsed] = useState(0);
   const [latestScoreId, setLatestScoreId] = useState('');
+  const [remoteScoreId, setRemoteScoreId] = useState<string | undefined>(undefined);
 
   // Refs mirror state so setTimeout closures always read the latest value
   const scoreRef   = useRef(0);
@@ -35,6 +39,7 @@ export default function Game({ config }: Readonly<Props>) {
 
   const navigate = useNavigate();
   const { nickname, addScore } = usePlayerStore();
+  const { playerId } = useAuthStore();
 
   useEffect(() => {
     const root = document.documentElement;
@@ -67,6 +72,7 @@ export default function Game({ config }: Readonly<Props>) {
     setMissed([]);
     setInputValue('');
     setFeedback(null);
+    setRemoteScoreId(undefined);
     setPhase('playing');
     timerRef.current = setInterval(() => {
       elapsedRef.current += 1;
@@ -79,7 +85,7 @@ export default function Game({ config }: Readonly<Props>) {
     const nextIndex = currentIndex + 1;
     const delay = wasCorrect ? 1000 : 2000;
     if (nextIndex >= deck.length) {
-      setTimeout(() => {
+      setTimeout(async () => {
         stopTimer();
         const id = crypto.randomUUID();
         setLatestScoreId(id);
@@ -92,6 +98,21 @@ export default function Game({ config }: Readonly<Props>) {
           total:     deck.length,
           duration:  elapsedRef.current,
         });
+
+        // Submit to Supabase in the background
+        if (playerId) {
+          const rid = await submitScore({
+            playerId,
+            gameId:      config.id,
+            gameTitle:   config.title,
+            score:       scoreRef.current,
+            total:       deck.length,
+            duration:    elapsedRef.current,
+            challengeId,
+          });
+          if (rid) setRemoteScoreId(rid);
+        }
+
         setPhase('result');
         setFeedback(null);
       }, delay);
@@ -102,7 +123,7 @@ export default function Game({ config }: Readonly<Props>) {
         setFeedback(null);
       }, delay);
     }
-  }, [currentIndex, deck.length, config.id, config.title, nickname, addScore]);
+  }, [currentIndex, deck.length, config.id, config.title, nickname, addScore, playerId, challengeId]);
 
   const handleSubmit = useCallback(() => {
     if (feedback) return;
@@ -152,6 +173,8 @@ export default function Game({ config }: Readonly<Props>) {
           total={config.questions.length}
           missed={missed}
           grades={config.grades}
+          gameId={config.id}
+          remoteScoreId={remoteScoreId}
           onNext={() => setPhase('leaderboard')}
         />
       </div>
@@ -165,6 +188,7 @@ export default function Game({ config }: Readonly<Props>) {
           gameId={config.id}
           gameTitle={config.title}
           latestId={latestScoreId}
+          challengeId={challengeId}
           onReplay={startGame}
         />
       </div>

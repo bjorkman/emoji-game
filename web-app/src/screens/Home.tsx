@@ -1,12 +1,15 @@
-import { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { useState, useCallback } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 import REGISTRY from '../games/registry';
 import { usePlayerStore } from '../store/playerStore';
+import { useAuthStore } from '../store/authStore';
+import { fetchChallenge } from '../lib/db';
 import {
-  page, header, logo, playerRow, playerName, changeBtn,
+  page, header, logo, playerRow, playerName, changeBtn, friendsLink,
   grid, card, cardTitle, cardTagline, cardMeta, cardCta,
   nicknameGate, nicknameCard, nicknameHeading, nicknameSubtext, nicknameForm, nicknameInput, nicknameBtn,
   scoresSection, scoresHeading, scoresTableWrap, scoresTable, scoreValue, scorePct, scoreDate,
+  challengeSection, challengeHeading, challengeRow, challengeInput, challengeJoinBtn, challengeError,
 } from './Home.css';
 
 function NicknameGate() {
@@ -96,8 +99,55 @@ function ScoresTable() {
   );
 }
 
+function ChallengeJoin() {
+  const navigate = useNavigate();
+  const { playerId } = useAuthStore();
+  const [code, setCode] = useState('');
+  const [error, setError] = useState('');
+  const [loading, setLoading] = useState(false);
+
+  const handleJoin = useCallback(async (e: React.FormEvent) => {
+    e.preventDefault();
+    const trimmed = code.trim().toUpperCase();
+    if (!trimmed) return;
+    setError('');
+    setLoading(true);
+    const challenge = await fetchChallenge(trimmed);
+    setLoading(false);
+    if (!challenge) {
+      setError('Challenge not found. Check the code and try again.');
+      return;
+    }
+    navigate(`/${challenge.game_id}?challenge=${challenge.id}`);
+  }, [code, navigate]);
+
+  if (!playerId) return null;
+
+  return (
+    <section className={challengeSection}>
+      <h2 className={challengeHeading}>Join a Challenge</h2>
+      <form className={challengeRow} onSubmit={handleJoin}>
+        <input
+          className={challengeInput}
+          type="text"
+          placeholder="Enter code (e.g. KPOP-XK7P)"
+          value={code}
+          onChange={(e) => setCode(e.target.value)}
+          maxLength={12}
+          autoComplete="off"
+        />
+        <button className={challengeJoinBtn} type="submit" disabled={!code.trim() || loading}>
+          {loading ? '…' : 'Join →'}
+        </button>
+      </form>
+      {error && <p className={challengeError}>{error}</p>}
+    </section>
+  );
+}
+
 export default function Home() {
   const { nickname, setNickname } = usePlayerStore();
+  const { playerId } = useAuthStore();
   const games = Object.values(REGISTRY);
 
   if (!nickname?.trim()) return <NicknameGate />;
@@ -114,6 +164,9 @@ export default function Home() {
           >
             change
           </button>
+          {playerId && (
+            <Link to="/friends" className={friendsLink}>Friends</Link>
+          )}
         </div>
       </header>
 
@@ -128,6 +181,7 @@ export default function Home() {
         ))}
       </div>
 
+      <ChallengeJoin />
       <ScoresTable />
     </div>
   );
