@@ -28,7 +28,6 @@ export const usePlayerStore = create<PlayerStore>()(
       setNickname: (name) => {
         const trimmed = name.trim();
         set({ nickname: trimmed });
-        // Sync to Supabase if we have an auth session
         const { playerId } = useAuthStore.getState();
         if (playerId && trimmed) {
           upsertPlayer(playerId, trimmed).catch(() => {/* silent — local store is source of truth */});
@@ -40,7 +39,7 @@ export const usePlayerStore = create<PlayerStore>()(
           highScores: [
             { ...entry, date: new Date().toISOString() },
             ...state.highScores,
-          ],
+          ].slice(0, 50),
         })),
     }),
     { name: 'emoji-game-player' }

@@ -19,15 +19,11 @@ import {
   challengeList, challengeCard, challengeCardHeader, challengeCode, challengeGameTag,
   challengeDate, challengeParticipants, participantRow, participantName, participantScore, challengePlayLink,
 } from './Friends.css';
+import { formatTime } from '../lib/format';
 
 interface SearchResult {
   id: string;
   nickname: string;
-}
-
-function formatTime(s?: number | null): string {
-  if (s == null) return '—';
-  return `${Math.floor(s / 60)}:${(s % 60).toString().padStart(2, '0')}`;
 }
 
 export default function Friends() {
@@ -61,7 +57,6 @@ export default function Friends() {
     setSearching(true);
     setSearchError('');
     const found = await searchPlayersByNickname(q);
-    // Filter out self and existing friends
     const friendIds = new Set(friends.map(f => f.friend_id));
     const filtered = found.filter(p => p.id !== playerId && !friendIds.has(p.id));
     setResults(filtered);

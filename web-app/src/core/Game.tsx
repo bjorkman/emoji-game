@@ -51,7 +51,6 @@ export default function Game({ config, challengeId }: Readonly<Props>) {
     root.style.setProperty('--color-splash-bg',     splashBg);
   }, [config.theme]);
 
-  // Clean up timer on unmount
   useEffect(() => () => { if (timerRef.current) clearInterval(timerRef.current); }, []);
 
   function stopTimer() {
@@ -99,7 +98,6 @@ export default function Game({ config, challengeId }: Readonly<Props>) {
           duration:  elapsedRef.current,
         });
 
-        // Submit to Supabase in the background
         if (playerId) {
           const rid = await submitScore({
             playerId,

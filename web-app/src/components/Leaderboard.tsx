@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { Link } from 'react-router-dom';
 import { usePlayerStore } from '../store/playerStore';
 import { useAuthStore } from '../store/authStore';
@@ -14,15 +14,9 @@ import {
   rank, scoreVal, scorePct, time, rankNote, actions, chooseGame,
   tabs, tab, tabActive,
 } from './Leaderboard.css';
+import { formatTime } from '../lib/format';
 
 type Tab = 'local' | 'global' | 'friends' | 'challenge';
-
-function formatTime(seconds?: number | null): string {
-  if (seconds == null) return '—';
-  const m = Math.floor(seconds / 60);
-  const s = seconds % 60;
-  return `${m}:${s.toString().padStart(2, '0')}`;
-}
 
 interface Props {
   gameId: string;
@@ -73,13 +67,15 @@ export default function Leaderboard({ gameId, gameTitle, latestId, challengeId, 
     });
   }, [activeTab, gameId, playerId, challengeId]);
 
-  // Local tab data
-  const sorted = highScores
-    .filter((s) => s.gameId === gameId)
-    .sort((a, b) => {
-      if (b.score !== a.score) return b.score - a.score;
-      return (a.duration ?? Infinity) - (b.duration ?? Infinity);
-    });
+  const sorted = useMemo(() =>
+    highScores
+      .filter((s) => s.gameId === gameId)
+      .sort((a, b) => {
+        if (b.score !== a.score) return b.score - a.score;
+        return (a.duration ?? Infinity) - (b.duration ?? Infinity);
+      }),
+    [highScores, gameId]
+  );
   const top10 = sorted.slice(0, 10);
   const playerRank = sorted.findIndex((s) => s.id === latestId) + 1;
   const inTop10 = playerRank >= 1 && playerRank <= 10;
@@ -105,7 +101,7 @@ export default function Leaderboard({ gameId, gameTitle, latestId, challengeId, 
             {rows.map((entry, i) => (
               <tr key={entry.id} className={entry.id === currentId ? highlight : undefined}>
                 <td className={rank}>{i + 1}</td>
-                <td>{'nickname' in entry ? entry.nickname : (entry as any).nickname}</td>
+                <td>{entry.nickname}</td>
                 <td>
                   <span className={scoreVal}>{entry.score}/{entry.total}</span>
                   <span className={scorePct}>{Math.round((entry.score / entry.total) * 100)}%</span>

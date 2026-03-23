@@ -1,14 +1,9 @@
 import { useEffect, useRef, useState, type KeyboardEvent } from 'react';
 import { type Question, type Difficulty, type Feedback } from '../core/types';
 import { card, emojiDisplay, emoji, hint, hintActive, inputRow, guessInput } from './GameCard.css';
-import { btnSubmit, btnSkip, difficultyEasy, difficultyMedium, difficultyHard } from '../shared.css';
+import { btnSubmit, btnSkip, DIFFICULTY_CLASS } from '../shared.css';
 
 const DIFFICULTY_LABELS: Record<Difficulty, string> = { easy: 'Easy', medium: 'Medium', hard: 'Hard' };
-const DIFFICULTY_CLASS: Record<Difficulty, string> = {
-  easy:   difficultyEasy,
-  medium: difficultyMedium,
-  hard:   difficultyHard,
-};
 
 const HINT_DELAY_MS = 5000;
 

@@ -11,6 +11,7 @@ import {
   scoresSection, scoresHeading, scoresTableWrap, scoresTable, scoreValue, scorePct, scoreDate,
   challengeSection, challengeHeading, challengeRow, challengeInput, challengeJoinBtn, challengeError,
 } from './Home.css';
+import { formatTime } from '../lib/format';
 
 function NicknameGate() {
   const setNickname = usePlayerStore((s) => s.setNickname);
@@ -43,13 +44,6 @@ function NicknameGate() {
       </div>
     </div>
   );
-}
-
-function formatTime(seconds?: number): string {
-  if (seconds == null) return '—';
-  const m = Math.floor(seconds / 60);
-  const s = seconds % 60;
-  return `${m}:${s.toString().padStart(2, '0')}`;
 }
 
 function ScoresTable() {

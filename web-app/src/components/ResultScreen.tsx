@@ -1,15 +1,9 @@
 import { useState, useCallback } from 'react';
-import { type Question, type Difficulty } from '../core/types';
+import { type Question } from '../core/types';
 import { useAuthStore } from '../store/authStore';
-import { createChallenge, linkScoreToChallenge } from '../lib/db';
+import { createChallenge, fetchChallenge, linkScoreToChallenge } from '../lib/db';
 import { screen, finalScore, scoreNumber, scoreDenom, gradeMessage, missedSection, missedList, missedItem, missedEmojis, missedName, challengeWrap, challengeCode, challengeCopyBtn, challengeHint } from './ResultScreen.css';
-import { btnReplay, btnSkip, difficultyEasy, difficultyMedium, difficultyHard } from '../shared.css';
-
-const DIFFICULTY_CLASS: Record<Difficulty, string> = {
-  easy:   difficultyEasy,
-  medium: difficultyMedium,
-  hard:   difficultyHard,
-};
+import { btnReplay, btnSkip, DIFFICULTY_CLASS } from '../shared.css';
 
 interface Props {
   score: number;
@@ -34,8 +28,6 @@ export default function ResultScreen({ score, total, missed, grades, gameId, rem
     setCreating(true);
     const c = await createChallenge(gameId, playerId);
     if (c && remoteScoreId) {
-      // Fetch the challenge id so we can link the creator's score to it
-      const { fetchChallenge } = await import('../lib/db');
       const challenge = await fetchChallenge(c);
       if (challenge) await linkScoreToChallenge(remoteScoreId, challenge.id);
     }

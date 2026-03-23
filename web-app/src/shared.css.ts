@@ -1,4 +1,5 @@
 import { style } from '@vanilla-extract/css';
+import type { Difficulty } from './core/types';
 
 const btnBase = style({
   cursor: 'pointer',
@@ -48,3 +49,9 @@ const difficultyBadge = style({
 export const difficultyEasy   = style([difficultyBadge, { background: '#14532d', color: '#86efac' }]);
 export const difficultyMedium = style([difficultyBadge, { background: '#78350f', color: '#fde68a' }]);
 export const difficultyHard   = style([difficultyBadge, { background: '#4c0519', color: '#fca5a5' }]);
+
+export const DIFFICULTY_CLASS: Record<Difficulty, string> = {
+  easy:   difficultyEasy,
+  medium: difficultyMedium,
+  hard:   difficultyHard,
+};
