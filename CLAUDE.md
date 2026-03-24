@@ -2,7 +2,7 @@
 
 ## Project Overview
 
-A multi-game emoji guessing platform with a Supabase backend for global leaderboards, challenges, and friends. All application code lives in `web-app/`. Adding a new game requires only a new folder under `src/games/` — no core code changes.
+A multi-game emoji guessing platform built with React Native and Expo, with a Supabase backend for global leaderboards, challenges, and friends. All application code lives in `mobile-app/`. Adding a new game requires only a new folder under `src/games/` — no core code changes.
 
 ## Repo Structure
 
@@ -12,80 +12,88 @@ emoji-game/
 ├── .env.example                          ← Supabase env var template
 ├── supabase/
 │   └── migrations/                       ← SQL migrations (run in Supabase dashboard)
-└── web-app/                              ← Main application (work here)
-    ├── src/
-    │   ├── main.tsx                      ← Entry point; bootstraps Supabase auth
-    │   ├── App.tsx                       ← Router only (BrowserRouter + Routes)
-    │   ├── global.css                    ← Reset, body, #root, CSS var defaults
-    │   ├── shared.css.ts                 ← Shared: btn variants + difficulty badge
-    │   ├── core/
-    │   │   ├── types.ts                  ← Question, Theme, GameConfig, Difficulty, Feedback
-    │   │   ├── gameLogic.ts              ← shuffle(), isCorrect() — pure, no React
-    │   │   ├── Game.tsx                  ← Generic state machine, applies theme vars to :root
-    │   │   └── Game.css.ts
-    │   ├── lib/
-    │   │   ├── supabase.ts               ← Supabase client (reads VITE_SUPABASE_* env vars)
-    │   │   └── db.ts                     ← All data access: scores, leaderboards, challenges, friends
-    │   ├── store/
-    │   │   ├── authStore.ts              ← Zustand store for Supabase anonymous session (playerId)
-    │   │   └── playerStore.ts            ← Zustand + localStorage: nickname, local highScores
-    │   ├── components/
-    │   │   ├── GameCard.tsx / .css.ts
-    │   │   ├── FeedbackBanner.tsx / .css.ts
-    │   │   ├── ProgressBar.tsx / .css.ts
-    │   │   ├── ResultScreen.tsx / .css.ts  ← Score, grade, challenge button, missed answers
-    │   │   ├── Leaderboard.tsx / .css.ts   ← Local / Global / Friends / Challenge tabs
-    │   │   └── SplashScreen.tsx / .css.ts
-    │   ├── games/
-    │   │   ├── registry.ts               ← Maps gameId → GameConfig
-    │   │   └── kpop/ animals/ movies/ countries/ capitals/
-    │   │       ├── config.ts             ← GameConfig (theme, splash cards, grades)
-    │   │       └── data.ts               ← Question[]
-    │   └── screens/
-    │       ├── Home.tsx / .css.ts        ← Game picker, challenge code join, recent scores
-    │       ├── GameRoute.tsx             ← Looks up config, reads ?challenge= param
-    │       └── Friends.tsx / .css.ts     ← Friends list, pending requests, challenge history
-    ├── public/groups/                    ← K-pop group images
-    ├── index.html
-    ├── vite.config.js
-    └── package.json
+└── mobile-app/                           ← Main application (work here)
+    ├── App.tsx                           ← Entry point; providers + auth init
+    ├── index.ts                          ← Expo registerRootComponent
+    ├── app.json                          ← Expo config (splash, icons, orientation)
+    ├── babel.config.js
+    ├── tsconfig.json                     ← Extends expo/tsconfig.base, strict: true
+    ├── assets/                           ← App icons, splash screen images
+    └── src/
+        ├── core/
+        │   ├── types.ts                  ← Question, Theme, GameConfig, Difficulty, Feedback
+        │   ├── gameLogic.ts              ← shuffle(), isCorrect() — pure, no React
+        │   └── Game.tsx                  ← Generic state machine (render props pattern)
+        ├── navigation/
+        │   ├── AppNavigator.tsx          ← Native Stack Navigator (Home, Game, Friends)
+        │   └── types.ts                  ← RootStackParamList
+        ├── screens/
+        │   ├── HomeScreen.tsx            ← Game picker, nickname gate, challenge join
+        │   ├── GameScreen.tsx            ← Wraps Game; passes render* props for UI
+        │   └── FriendsScreen.tsx         ← Friends list, pending requests, challenge history
+        ├── components/
+        │   ├── GameCard.tsx              ← Emoji clues, text input, submit/skip
+        │   ├── SplashScreen.tsx          ← Intro + instructions (LinearGradient)
+        │   ├── ProgressBar.tsx
+        │   ├── FeedbackBanner.tsx
+        │   ├── ResultScreen.tsx          ← Score, grade, challenge button, missed answers
+        │   └── Leaderboard.tsx           ← Tabs: Local / Global / Friends / Challenge
+        ├── games/
+        │   ├── registry.ts              ← Maps gameId → GameConfig
+        │   └── kpop/ animals/ movies/ countries/ capitals/
+        │       ├── config.ts            ← GameConfig (theme, instructions, grades, splash cards)
+        │       └── data.ts              ← Question[]
+        ├── store/
+        │   ├── authStore.ts             ← Zustand: playerId via Supabase anonymous auth
+        │   └── playerStore.ts           ← Zustand + AsyncStorage persist: nickname, highScores
+        ├── lib/
+        │   ├── supabase.ts              ← Supabase client (reads EXPO_PUBLIC_* env vars)
+        │   ├── db.ts                    ← All data access: scores, leaderboards, challenges, friends
+        │   └── format.ts               ← formatTime() utility
+        └── theme/
+            └── ThemeContext.tsx          ← React Context for dynamic theme colors
 ```
 
 ## Tech Stack
 
-- **Framework**: React 19 with TypeScript (TSX throughout)
-- **Build Tool**: Vite 7
-- **Router**: react-router-dom v7 (BrowserRouter)
+- **Framework**: React Native 0.83 + Expo ~55, React 19, TypeScript
+- **Navigation**: @react-navigation/native-stack v7
 - **Package Manager**: yarn (v1.22)
-- **Styling**: vanilla-extract (`*.css.ts` files), dark theme, CSS custom properties for theming
-- **State**: Zustand (`authStore` for Supabase session, `playerStore` for local nickname/scores)
+- **Styling**: React Native `StyleSheet.create()` + `ThemeContext` for per-game colors
+- **Gradients**: expo-linear-gradient
+- **State**: Zustand (`authStore` for Supabase session, `playerStore` for local nickname/scores via AsyncStorage)
 - **Backend**: Supabase — anonymous auth, Postgres DB with RLS
+- **Testing**: Jest with jest-expo preset, @testing-library/react-native
 
 ## Dev Commands
 
-All run from `web-app/`:
+All run from `mobile-app/`:
 
 ```bash
-yarn dev          # Start dev server with HMR (localhost:5173)
-yarn build        # Production build → dist/
-yarn lint         # ESLint
-yarn preview      # Preview production build
+yarn start        # Expo dev server
+yarn ios          # Run on iOS simulator
+yarn android      # Run on Android emulator
+yarn test         # Jest tests
+yarn lint         # ESLint (eslint-config-expo)
+yarn lint:fix     # ESLint with auto-fix
+yarn format       # Prettier formatting
 ```
 
-Requires `web-app/.env.local` with:
+Requires env vars (in `.env` or Expo config):
 ```
-VITE_SUPABASE_URL=https://<project>.supabase.co
-VITE_SUPABASE_ANON_KEY=<anon-key>
+EXPO_PUBLIC_SUPABASE_URL=https://<project>.supabase.co
+EXPO_PUBLIC_SUPABASE_ANON_KEY=<anon-key>
 ```
 
-## Routes
+## Navigation
 
-| URL | Renders |
-|-----|---------|
-| `/` | `<Home>` — game picker + challenge join |
-| `/friends` | `<Friends>` — friends list + challenge history |
-| `/:gameId` | Any registered game (unknown ID → redirect to `/`) |
-| `/:gameId?challenge=<id>` | Game pre-linked to a challenge; score is tagged on submit |
+| Screen | Route | Params |
+|--------|-------|--------|
+| `HomeScreen` | `Home` | — |
+| `GameScreen` | `Game` | `gameId`, `challengeId?` |
+| `FriendsScreen` | `Friends` | — |
+
+Native stack navigator with dark theme (`#0d0d1a`), slide-from-right animation.
 
 ## Architecture
 
@@ -99,30 +107,29 @@ No other files need to change.
 
 ### Game State Machine (`core/Game.tsx`)
 
-Four phases:
+Four phases: `start` → `playing` → `result` → `leaderboard`
 
-| Phase | Renders |
-|-------|---------|
-| `'start'` | `<SplashScreen>` |
-| `'playing'` | `<ProgressBar>` + `<FeedbackBanner>` + `<GameCard>` |
-| `'result'` | `<ResultScreen>` — score, grade, challenge button, missed answers |
-| `'leaderboard'` | `<Leaderboard>` — tabbed: Local / Global / Friends (/ Challenge) |
+Game.tsx owns the state machine and timer. It does **not** import UI components directly — instead, `GameScreen.tsx` passes render functions (`renderSplash`, `renderPlaying`, `renderResult`, `renderLeaderboard`) that receive the relevant state and callbacks. This decouples game logic from presentation.
 
-On game end, `Game.tsx` calls `addScore()` (local) and `submitScore()` (Supabase) in parallel. If a `challengeId` prop is present (from `?challenge=` param), the score is tagged with it.
+On game end, `Game.tsx` calls `addScore()` (local) and `submitScore()` (Supabase) in parallel. If a `challengeId` is present, the score is tagged with it.
+
+### Theming (`theme/ThemeContext.tsx`)
+
+Each game's `GameConfig.theme` provides color values (primary, secondary, secondaryRgb, accent, splashBg). On game start, `Game.tsx` calls `setTheme()` to update the React Context. Components read colors via `useTheme()` and apply them inline.
 
 ### Supabase Auth
 
-`authStore.ts` calls `supabase.auth.signInAnonymously()` once on app load (via `main.tsx`). The session is persisted by Supabase in localStorage. `playerId` = Supabase `user.id` (UUID). When a nickname is set, `playerStore.setNickname` also upserts a row in the `players` table.
+`authStore.ts` calls `supabase.auth.signInAnonymously()` once on app load (via `App.tsx`). The session is persisted by Supabase in AsyncStorage. `playerId` = Supabase `user.id` (UUID). When a nickname is set, `playerStore.setNickname` also upserts a row in the `players` table.
 
 ### Challenge Flow
 
 1. Player A finishes → clicks **Challenge Friends** in ResultScreen
 2. `createChallenge(gameId, playerId)` inserts a row, returns a short code (`KPOP-XK7P`)
-3. Player A's score is retroactively linked to the challenge via `linkScoreToChallenge`
-4. Player B enters the code on Home → navigates to `/:gameId?challenge=<id>`
+3. Player A's score is retroactively linked via `linkScoreToChallenge`
+4. Player B enters the code on HomeScreen → navigates to Game with `challengeId`
 5. Player B's score is submitted with `challenge_id` set
-6. Both see the **Challenge** leaderboard tab on the Leaderboard screen
-7. Challenge history (with participant scores) is visible on `/friends`
+6. Both see the **Challenge** leaderboard tab
+7. Challenge history visible on FriendsScreen
 
 ### Database Tables
 
@@ -152,30 +159,18 @@ export interface Question {
 }
 ```
 
-### Theming
-
-Each game's `GameConfig.theme` provides 5 CSS custom property values written to `document.documentElement`:
-
-| CSS var | Role |
-|---------|------|
-| `--color-primary` | Gradient start |
-| `--color-secondary` | Gradient mid, button fill, focus ring |
-| `--color-secondary-rgb` | `"r, g, b"` for use in `rgba()` |
-| `--color-accent` | Gradient end |
-| `--color-splash-bg` | Splash screen background |
-
 ## Styling Conventions
 
-- **vanilla-extract** — one `*.css.ts` per component; all class names are camelCase
-- Dark navy backgrounds: `#0d0d1a`, `#14142a`; light text: `#f0f0f5`, muted: `#8888aa`
-- Accent colors via CSS custom properties (`--color-primary/secondary/accent`)
-- Global reset in `src/global.css`; shared buttons/badges in `src/shared.css.ts`
-- Responsive: mobile-first, `@media (min-width: 480px/768px)` for larger screens
+- `StyleSheet.create()` per component — no external CSS, no component library
+- Dark navy backgrounds: `#0d0d1a`, `#1a1a2e`; light text: `#f0f0f5`, muted: `#8888aa`
+- Accent colors via ThemeContext (`theme.primary`, `theme.secondary`, `theme.accent`)
+- Gradients via `expo-linear-gradient`
+- All UI built with View, Text, TextInput, TouchableOpacity, ScrollView
 
 ## Key Conventions
 
 - TSX throughout; `strict: true` TypeScript
 - Each component defines a local `interface Props`
 - `useCallback` on all handlers
-- Decorative elements use `aria-hidden="true"`
+- Tests colocated in `__tests__/` directories alongside source
 - Never include `Co-Authored-By` in commit messages
