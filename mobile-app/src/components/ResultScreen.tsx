@@ -33,7 +33,7 @@ export default function ResultScreen({ score, total, missed, grades, gameId, rem
     }
     setCode(c);
     setCreating(false);
-  }, [playerId, gameId, remoteScoreId]);
+  }, [playerId, gameId, remoteScoreId, creating]);
 
   const handleShare = useCallback(async () => {
     if (!code) return;
