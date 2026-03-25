@@ -27,6 +27,7 @@ const countriesConfig: GameConfig = {
     splashBg:     '#020d14',
   },
   questions,
+  questionCount: 10,
   splashCards: [],
 };
 
