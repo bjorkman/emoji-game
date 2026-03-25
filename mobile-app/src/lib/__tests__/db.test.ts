@@ -26,7 +26,9 @@ jest.mock('../supabase', () => ({
 }));
 
 import { supabase } from '../supabase';
-import { upsertPlayer, searchPlayersByNickname, submitScore, fetchChallenge } from '../db';
+import { upsertPlayer, searchPlayersByNickname } from '../../services/playerService';
+import { submitScore } from '../../services/scoreService';
+import { fetchChallenge } from '../../services/challengeService';
 
 describe('db', () => {
   beforeEach(() => {

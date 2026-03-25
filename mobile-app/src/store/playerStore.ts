@@ -1,7 +1,7 @@
 import { create } from 'zustand';
 import { persist, createJSONStorage } from 'zustand/middleware';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { upsertPlayer } from '../lib/db';
+import { upsertPlayer } from '../services/playerService';
 import { useAuthStore } from './authStore';
 
 export interface HighScore {

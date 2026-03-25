@@ -4,6 +4,7 @@ import { NavigationContainer, createNavigationContainerRef } from '@react-naviga
 import { ThemeProvider } from './src/theme/ThemeContext';
 import { useAuthStore } from './src/store/authStore';
 import AppNavigator from './src/navigation/AppNavigator';
+import UpdateGate from './src/components/UpdateGate';
 import { type RootStackParamList } from './src/navigation/types';
 import { registerForPushNotifications, setupNotificationHandlers } from './src/lib/notifications';
 import { preloadSounds } from './src/lib/sounds';
@@ -33,10 +34,12 @@ export default function App() {
 
   return (
     <ThemeProvider>
-      <NavigationContainer ref={navigationRef}>
-        <StatusBar style="light" />
-        <AppNavigator />
-      </NavigationContainer>
+      <UpdateGate>
+        <NavigationContainer ref={navigationRef}>
+          <StatusBar style="light" />
+          <AppNavigator />
+        </NavigationContainer>
+      </UpdateGate>
     </ThemeProvider>
   );
 }

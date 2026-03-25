@@ -4,7 +4,7 @@ import Constants from 'expo-constants';
 import { Platform, AppState } from 'react-native';
 import { type NavigationContainerRefWithCurrent } from '@react-navigation/native';
 import { type RootStackParamList } from '../navigation/types';
-import { updatePushToken } from './db';
+import { updatePushToken } from '../services/playerService';
 
 // Show notifications even when app is in foreground
 Notifications.setNotificationHandler({

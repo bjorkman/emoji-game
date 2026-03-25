@@ -3,7 +3,7 @@ import { type GameConfig, type Question, type Feedback } from './types';
 import { seededShuffle, selectBalancedSubset, isCorrect } from './gameLogic';
 import { usePlayerStore } from '../store/playerStore';
 import { useAuthStore } from '../store/authStore';
-import { submitScore } from '../lib/db';
+import { submitScore } from '../services/scoreService';
 import { useTheme } from '../theme/ThemeContext';
 import { hapticCorrect, hapticWrong, hapticSuccess } from '../lib/haptics';
 import { playCorrect, playWrong } from '../lib/sounds';
