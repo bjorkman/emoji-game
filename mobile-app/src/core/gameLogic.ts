@@ -81,6 +81,11 @@ export function selectBalancedSubset(
   return seededShuffle(picked, seed + 13);
 }
 
+/** Filter out retired questions — use only for new games, not seeded replays. */
+export function activeQuestions(questions: Question[]): Question[] {
+  return questions.filter(q => !q.retired);
+}
+
 export function isCorrect(input: string, question: Question): boolean {
   const n = normalize(input);
   if (!n) return false;

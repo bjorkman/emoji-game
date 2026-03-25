@@ -3,6 +3,7 @@ import {
   seededShuffle,
   selectBalancedSubset,
   isCorrect,
+  activeQuestions,
 } from '../gameLogic';
 import { type Question } from '../types';
 
@@ -131,6 +132,41 @@ describe('selectBalancedSubset', () => {
     const result = selectBalancedSubset(pool, 10, 42);
     const ids = result.map(q => q.id);
     expect(new Set(ids).size).toBe(ids.length);
+  });
+});
+
+describe('activeQuestions', () => {
+  it('filters out retired questions', () => {
+    const questions = [
+      makeQuestion('a', [], 'easy', 1),
+      { ...makeQuestion('b', [], 'easy', 2), retired: true },
+      makeQuestion('c', [], 'easy', 3),
+    ];
+    const result = activeQuestions(questions);
+    expect(result).toHaveLength(2);
+    expect(result.map(q => q.id)).toEqual([1, 3]);
+  });
+
+  it('returns all questions when none are retired', () => {
+    const questions = [
+      makeQuestion('a', [], 'easy', 1),
+      makeQuestion('b', [], 'medium', 2),
+    ];
+    expect(activeQuestions(questions)).toHaveLength(2);
+  });
+
+  it('returns empty array when all are retired', () => {
+    const questions = [
+      { ...makeQuestion('a', [], 'easy', 1), retired: true },
+      { ...makeQuestion('b', [], 'easy', 2), retired: true },
+    ];
+    expect(activeQuestions(questions)).toHaveLength(0);
+  });
+
+  it('treats undefined retired as active', () => {
+    const q = makeQuestion('a', [], 'easy', 1);
+    expect(q.retired).toBeUndefined();
+    expect(activeQuestions([q])).toHaveLength(1);
   });
 });
 
