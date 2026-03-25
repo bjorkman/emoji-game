@@ -14,6 +14,7 @@ export interface Question {
   difficulty: Difficulty;
   aliases: string[];
   hint?: string;
+  retired?: boolean;
 }
 
 export interface Theme {

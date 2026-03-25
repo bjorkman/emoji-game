@@ -1,6 +1,6 @@
 import { useState, useCallback, useEffect, useRef } from 'react';
 import { type GameConfig, type Question, type Feedback } from './types';
-import { seededShuffle, selectBalancedSubset, isCorrect } from './gameLogic';
+import { seededShuffle, selectBalancedSubset, isCorrect, activeQuestions } from './gameLogic';
 import { usePlayerStore } from '../store/playerStore';
 import { useAuthStore } from '../store/authStore';
 import { submitScore } from '../services/scoreService';
@@ -106,10 +106,13 @@ export default function Game({
     setElapsed(0);
     const seed = Math.floor(Math.random() * 0x100000000);
     gameSeedRef.current = seed;
+    // For new games, exclude retired questions. Existing challenges/tournaments
+    // must use the full pool so the stored seed produces the same deck.
+    const pool = challengeId ? config.questions : activeQuestions(config.questions);
     if (config.questionCount) {
-      setDeck(selectBalancedSubset(config.questions, config.questionCount, seed));
+      setDeck(selectBalancedSubset(pool, config.questionCount, seed));
     } else {
-      setDeck(seededShuffle(config.questions, seed));
+      setDeck(seededShuffle(pool, seed));
     }
     setCurrentIndex(0);
     setMissed([]);
@@ -121,7 +124,7 @@ export default function Game({
       elapsedRef.current += 1;
       setElapsed(elapsedRef.current);
     }, 1000);
-  }, [config.questions, config.questionCount]);
+  }, [config.questions, config.questionCount, challengeId]);
 
   const advance = useCallback((wasCorrect: boolean, question: Question) => {
     if (!wasCorrect) setMissed(prev => [...prev, question]);
