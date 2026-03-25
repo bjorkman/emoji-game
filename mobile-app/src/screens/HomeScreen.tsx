@@ -7,7 +7,7 @@ import { type HomeScreenProps } from '../navigation/types';
 import REGISTRY from '../games/registry';
 import { usePlayerStore } from '../store/playerStore';
 import { useAuthStore } from '../store/authStore';
-import { fetchChallenge } from '../lib/db';
+import { fetchChallenge } from '../services/challengeService';
 import { formatTime } from '../lib/format';
 import { type GameConfig } from '../core/types';
 

@@ -2,12 +2,8 @@ import React, { useState, useEffect, useMemo } from 'react';
 import { View, Text, TouchableOpacity, FlatList, ActivityIndicator, StyleSheet } from 'react-native';
 import { usePlayerStore } from '../store/playerStore';
 import { useAuthStore } from '../store/authStore';
-import {
-  fetchGlobalLeaderboard,
-  fetchFriendsLeaderboard,
-  fetchChallengeLeaderboard,
-  type LeaderboardEntry,
-} from '../lib/db';
+import { fetchGlobalLeaderboard, fetchFriendsLeaderboard, type LeaderboardEntry } from '../services/scoreService';
+import { fetchChallengeLeaderboard } from '../services/challengeService';
 import { formatTime } from '../lib/format';
 import { useTheme } from '../theme/ThemeContext';
 

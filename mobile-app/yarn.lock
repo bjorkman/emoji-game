@@ -3619,7 +3619,7 @@ expo-clipboard@~55.0.9:
   resolved "https://registry.yarnpkg.com/expo-clipboard/-/expo-clipboard-55.0.9.tgz#7e9d658433d01c1cc35cfc9a7942dca423444bb9"
   integrity sha512-WJ9ougE8fEDu3/RV5Vz3gE5aNgnj1C0WByXCz3WUj8y/06bJyaIUDMq8FDLv3n0AO3guiErmkUunsD0EzSDUUw==
 
-expo-constants@~55.0.9:
+expo-constants@55.0.9, expo-constants@~55.0.9:
   version "55.0.9"
   resolved "https://registry.yarnpkg.com/expo-constants/-/expo-constants-55.0.9.tgz#73eda44cdc8198ba1eb83972f14c5aec9bc68e35"
   integrity sha512-iBiXjZeuU5S/8docQeNzsVvtDy4w0zlmXBpFEi1ypwugceEpdQQab65TVRbusXAcwpNVxCPMpNlDssYp0Pli2g==
