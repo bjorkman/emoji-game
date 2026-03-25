@@ -64,17 +64,19 @@ export async function submitScore(params: {
   total: number;
   duration?: number;
   challengeId?: string;
+  tournamentId?: string;
 }): Promise<string | null> {
   const { data, error } = await supabase
     .from('scores')
     .insert({
-      player_id:    params.playerId,
-      game_id:      params.gameId,
-      game_title:   params.gameTitle,
-      score:        params.score,
-      total:        params.total,
-      duration:     params.duration ?? null,
-      challenge_id: params.challengeId ?? null,
+      player_id:     params.playerId,
+      game_id:       params.gameId,
+      game_title:    params.gameTitle,
+      score:         params.score,
+      total:         params.total,
+      duration:      params.duration ?? null,
+      challenge_id:  params.challengeId ?? null,
+      tournament_id: params.tournamentId ?? null,
     })
     .select('id')
     .single();
@@ -266,6 +268,61 @@ export async function fetchChallengeLeaderboard(challengeId: string): Promise<Le
     return [];
   }
   return (data ?? []).map(mapLeaderboardRow);
+}
+
+// ─── Tournaments ──────────────────────────────────────────────────────────────
+
+export interface Tournament {
+  id: string;
+  title: string;
+  game_id: string;
+  seed: number;
+  starts_at: string;
+  ends_at: string;
+}
+
+export async function fetchActiveTournaments(): Promise<Tournament[]> {
+  const { data, error } = await supabase
+    .from('tournaments')
+    .select('id, title, game_id, seed, starts_at, ends_at')
+    .lte('starts_at', new Date().toISOString())
+    .gte('ends_at', new Date().toISOString())
+    .order('ends_at', { ascending: true });
+
+  if (error) {
+    console.error('[db] fetchActiveTournaments:', error.message);
+    return [];
+  }
+  return data ?? [];
+}
+
+export async function fetchTournamentLeaderboard(tournamentId: string): Promise<LeaderboardEntry[]> {
+  const { data, error } = await supabase
+    .from('scores')
+    .select('id, player_id, players(nickname), score, total, duration, created_at')
+    .eq('tournament_id', tournamentId)
+    .order('score', { ascending: false })
+    .order('duration', { ascending: true, nullsFirst: false });
+
+  if (error) {
+    console.error('[db] fetchTournamentLeaderboard:', error.message);
+    return [];
+  }
+  return (data ?? []).map(mapLeaderboardRow);
+}
+
+export async function hasPlayedTournament(tournamentId: string, playerId: string): Promise<boolean> {
+  const { count, error } = await supabase
+    .from('scores')
+    .select('id', { count: 'exact', head: true })
+    .eq('tournament_id', tournamentId)
+    .eq('player_id', playerId);
+
+  if (error) {
+    console.error('[db] hasPlayedTournament:', error.message);
+    return false;
+  }
+  return (count ?? 0) > 0;
 }
 
 // ─── Friendships ──────────────────────────────────────────────────────────────

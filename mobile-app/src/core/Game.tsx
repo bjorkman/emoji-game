@@ -13,6 +13,7 @@ interface Props {
   config: GameConfig;
   challengeId?: string;
   challengeSeed?: number;
+  tournamentId?: string;
   onGoHome: () => void;
   // Sub-component renderers — injected so Game doesn't import UI components directly
   renderSplash: (props: {
@@ -49,6 +50,7 @@ interface Props {
     gameTitle: string;
     latestId: string;
     challengeId?: string;
+    tournamentId?: string;
     onReplay: () => void;
   }) => React.ReactNode;
 }
@@ -57,6 +59,7 @@ export default function Game({
   config,
   challengeId,
   challengeSeed,
+  tournamentId,
   onGoHome,
   renderSplash,
   renderPlaying,
@@ -156,6 +159,7 @@ export default function Game({
             total: deck.length,
             duration: elapsedRef.current,
             challengeId,
+            tournamentId,
           }).then(rid => {
             if (rid) setRemoteScoreId(rid);
           });
@@ -168,7 +172,7 @@ export default function Game({
         setFeedback(null);
       }, delay);
     }
-  }, [currentIndex, deck.length, config.id, config.title, nickname, addScore, playerId, challengeId]);
+  }, [currentIndex, deck.length, config.id, config.title, nickname, addScore, playerId, challengeId, tournamentId]);
 
   const handleSubmit = useCallback(() => {
     if (feedback) return;
@@ -219,6 +223,7 @@ export default function Game({
       gameTitle: config.title,
       latestId: latestScoreId,
       challengeId,
+      tournamentId,
       onReplay: startGame,
     });
   }

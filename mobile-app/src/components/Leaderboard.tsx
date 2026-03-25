@@ -6,18 +6,20 @@ import {
   fetchGlobalLeaderboard,
   fetchFriendsLeaderboard,
   fetchChallengeLeaderboard,
+  fetchTournamentLeaderboard,
   type LeaderboardEntry,
 } from '../lib/db';
 import { formatTime } from '../lib/format';
 import { useTheme } from '../theme/ThemeContext';
 
-type Tab = 'local' | 'global' | 'friends' | 'challenge';
+type Tab = 'local' | 'global' | 'friends' | 'challenge' | 'tournament';
 
 interface Props {
   gameId: string;
   gameTitle: string;
   latestId: string;
   challengeId?: string;
+  tournamentId?: string;
   onReplay: () => void;
 }
 
@@ -29,12 +31,12 @@ interface Row {
   duration?: number | null;
 }
 
-export default function Leaderboard({ gameId, gameTitle, latestId, challengeId, onReplay }: Readonly<Props>) {
+export default function Leaderboard({ gameId, gameTitle, latestId, challengeId, tournamentId, onReplay }: Readonly<Props>) {
   const { theme } = useTheme();
   const highScores = usePlayerStore((s) => s.highScores);
   const { playerId } = useAuthStore();
 
-  const defaultTab: Tab = challengeId ? 'challenge' : 'local';
+  const defaultTab: Tab = tournamentId ? 'tournament' : challengeId ? 'challenge' : 'local';
   const [activeTab, setActiveTab] = useState<Tab>(defaultTab);
   const [remoteRows, setRemoteRows] = useState<Row[]>([]);
   const [loading, setLoading] = useState(false);
@@ -52,6 +54,8 @@ export default function Leaderboard({ gameId, gameTitle, latestId, challengeId, 
       fetchPromise = fetchFriendsLeaderboard(gameId, playerId);
     } else if (activeTab === 'challenge' && challengeId) {
       fetchPromise = fetchChallengeLeaderboard(challengeId);
+    } else if (activeTab === 'tournament' && tournamentId) {
+      fetchPromise = fetchTournamentLeaderboard(tournamentId);
     } else {
       setLoading(false);
       return;
@@ -65,7 +69,7 @@ export default function Leaderboard({ gameId, gameTitle, latestId, challengeId, 
     });
 
     return () => { cancelled = true; };
-  }, [activeTab, gameId, playerId, challengeId]);
+  }, [activeTab, gameId, playerId, challengeId, tournamentId]);
 
   const sorted = useMemo(() =>
     highScores
@@ -113,6 +117,17 @@ export default function Leaderboard({ gameId, gameTitle, latestId, challengeId, 
             >
               <Text style={[styles.tabText, activeTab === 'challenge' && styles.tabTextActive]}>
                 Challenge
+              </Text>
+            </TouchableOpacity>
+          )}
+          {tournamentId && (
+            <TouchableOpacity
+              style={[styles.tab, activeTab === 'tournament' && { backgroundColor: theme.secondary }]}
+              onPress={() => setActiveTab('tournament')}
+              testID="tab-tournament"
+            >
+              <Text style={[styles.tabText, activeTab === 'tournament' && styles.tabTextActive]}>
+                Tournament
               </Text>
             </TouchableOpacity>
           )}

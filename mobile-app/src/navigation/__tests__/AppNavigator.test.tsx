@@ -29,6 +29,7 @@ jest.mock('../../lib/db', () => ({
   acceptFriendRequest: jest.fn().mockResolvedValue(true),
   upsertPlayer: jest.fn().mockResolvedValue(undefined),
   fetchChallenge: jest.fn().mockResolvedValue(null),
+  fetchActiveTournaments: jest.fn().mockResolvedValue([]),
   submitScore: jest.fn().mockResolvedValue(null),
 }));
 

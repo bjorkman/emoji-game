@@ -11,7 +11,7 @@ import ResultScreen from '../components/ResultScreen';
 import Leaderboard from '../components/Leaderboard';
 
 export default function GameScreen({ route, navigation }: Readonly<GameScreenProps>) {
-  const { gameId, challengeId, challengeSeed } = route.params;
+  const { gameId, challengeId, challengeSeed, tournamentId } = route.params;
   const config = REGISTRY[gameId];
 
   useEffect(() => {
@@ -25,6 +25,7 @@ export default function GameScreen({ route, navigation }: Readonly<GameScreenPro
       config={config}
       challengeId={challengeId}
       challengeSeed={challengeSeed}
+      tournamentId={tournamentId}
       onGoHome={() => navigation.replace('Home')}
       renderSplash={(props) => (
         <SplashScreen
@@ -83,6 +84,7 @@ export default function GameScreen({ route, navigation }: Readonly<GameScreenPro
           gameTitle={props.gameTitle}
           latestId={props.latestId}
           challengeId={props.challengeId}
+          tournamentId={props.tournamentId}
           onReplay={props.onReplay}
         />
       )}

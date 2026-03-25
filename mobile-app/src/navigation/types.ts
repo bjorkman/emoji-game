@@ -2,7 +2,7 @@ import { type NativeStackScreenProps } from '@react-navigation/native-stack';
 
 export type RootStackParamList = {
   Home: undefined;
-  Game: { gameId: string; challengeId?: string; challengeSeed?: number };
+  Game: { gameId: string; challengeId?: string; challengeSeed?: number; tournamentId?: string };
   Friends: undefined;
 };
 

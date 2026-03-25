@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useEffect } from 'react';
 import {
   View, Text, TextInput, TouchableOpacity,
   ScrollView, StyleSheet, ActivityIndicator,
@@ -7,7 +7,7 @@ import { type HomeScreenProps } from '../navigation/types';
 import REGISTRY from '../games/registry';
 import { usePlayerStore } from '../store/playerStore';
 import { useAuthStore } from '../store/authStore';
-import { fetchChallenge } from '../lib/db';
+import { fetchChallenge, fetchActiveTournaments, type Tournament } from '../lib/db';
 import { formatTime } from '../lib/format';
 import { type GameConfig } from '../core/types';
 
@@ -160,6 +160,51 @@ function ChallengeJoin({ navigation }: Readonly<{ navigation: HomeScreenProps['n
   );
 }
 
+// ─── Tournament List ────────────────────────────────────────────────────────
+
+function TournamentList({ navigation }: Readonly<{ navigation: HomeScreenProps['navigation'] }>) {
+  const [tournaments, setTournaments] = useState<Tournament[]>([]);
+
+  useEffect(() => {
+    fetchActiveTournaments().then(setTournaments);
+  }, []);
+
+  if (tournaments.length === 0) return null;
+
+  return (
+    <View style={styles.tournamentSection}>
+      <Text style={styles.sectionHeading}>Active Tournaments</Text>
+      {tournaments.map((t) => {
+        const endsAt = new Date(t.ends_at);
+        const now = new Date();
+        const hoursLeft = Math.max(0, Math.round((endsAt.getTime() - now.getTime()) / 3600000));
+        const gameTitle = REGISTRY[t.game_id]?.title ?? t.game_id;
+
+        return (
+          <TouchableOpacity
+            key={t.id}
+            style={styles.tournamentCard}
+            activeOpacity={0.8}
+            onPress={() =>
+              navigation.navigate('Game', {
+                gameId: t.game_id,
+                tournamentId: t.id,
+                challengeSeed: t.seed,
+              })
+            }
+          >
+            <Text style={styles.tournamentTitle}>{t.title}</Text>
+            <Text style={styles.tournamentMeta}>
+              {gameTitle} · {hoursLeft > 24 ? `${Math.round(hoursLeft / 24)}d left` : `${hoursLeft}h left`}
+            </Text>
+            <Text style={styles.tournamentCta}>Play</Text>
+          </TouchableOpacity>
+        );
+      })}
+    </View>
+  );
+}
+
 // ─── Home Screen ────────────────────────────────────────────────────────────
 
 export default function HomeScreen({ navigation }: Readonly<HomeScreenProps>) {
@@ -197,6 +242,7 @@ export default function HomeScreen({ navigation }: Readonly<HomeScreenProps>) {
         ))}
       </View>
 
+      <TournamentList navigation={navigation} />
       <ChallengeJoin navigation={navigation} />
       <ScoresList />
     </ScrollView>
@@ -259,6 +305,20 @@ const styles = StyleSheet.create({
   // Buttons
   btnText: { color: '#fff', fontSize: 16, fontWeight: '600' },
   btnDisabled: { opacity: 0.4 },
+
+  // Tournaments
+  tournamentSection: { paddingHorizontal: 16, marginTop: 24 },
+  tournamentCard: {
+    backgroundColor: '#1a1a2e',
+    borderRadius: 16,
+    padding: 16,
+    marginBottom: 8,
+    borderWidth: 1,
+    borderColor: '#38bdf8',
+  },
+  tournamentTitle: { fontSize: 16, fontWeight: 'bold', color: '#f0f0f5', marginBottom: 4 },
+  tournamentMeta: { fontSize: 13, color: '#8888aa' },
+  tournamentCta: { fontSize: 14, fontWeight: '600', color: '#38bdf8', marginTop: 8 },
 
   // Challenge
   challengeSection: { paddingHorizontal: 20, marginTop: 32 },

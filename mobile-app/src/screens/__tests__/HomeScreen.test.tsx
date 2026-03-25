@@ -8,14 +8,19 @@ jest.mock('@react-native-async-storage/async-storage', () =>
   require('@react-native-async-storage/async-storage/jest/async-storage-mock')
 );
 
+const mockChain = (): any => {
+  const chain: any = {};
+  const methods = ['select', 'eq', 'lte', 'gte', 'order', 'limit', 'single', 'in', 'not', 'or', 'upsert', 'insert', 'update'];
+  for (const m of methods) chain[m] = jest.fn(() => chain);
+  chain.single.mockResolvedValue({ data: null, error: { message: 'not found' } });
+  chain.order.mockReturnValue(chain);
+  chain.limit.mockResolvedValue({ data: [], error: null });
+  return chain;
+};
+
 jest.mock('../../lib/supabase', () => ({
   supabase: {
-    from: jest.fn(() => ({
-      upsert: jest.fn().mockResolvedValue({ error: null }),
-      select: jest.fn(() => ({
-        eq: jest.fn(() => ({ single: jest.fn().mockResolvedValue({ data: null, error: { message: 'not found' } }) })),
-      })),
-    })),
+    from: jest.fn(() => mockChain()),
     auth: {
       getSession: jest.fn().mockResolvedValue({ data: { session: null } }),
       signInAnonymously: jest.fn().mockResolvedValue({ data: { user: { id: 'test' } }, error: null }),
