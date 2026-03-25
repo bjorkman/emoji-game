@@ -5,6 +5,8 @@ import { usePlayerStore } from '../store/playerStore';
 import { useAuthStore } from '../store/authStore';
 import { submitScore } from '../services/scoreService';
 import { useTheme } from '../theme/ThemeContext';
+import { hapticCorrect, hapticWrong, hapticSuccess } from '../lib/haptics';
+import { playCorrect, playWrong } from '../lib/sounds';
 import * as Crypto from 'expo-crypto';
 
 export type Phase = 'start' | 'playing' | 'result' | 'leaderboard';
@@ -141,6 +143,7 @@ export default function Game({
           duration: elapsedRef.current,
         });
 
+        hapticSuccess();
         setPhase('result');
         setFeedback(null);
 
@@ -173,8 +176,13 @@ export default function Game({
     const correct = isCorrect(inputValue, question);
     setFeedback(correct ? 'correct' : 'wrong');
     if (correct) {
+      hapticCorrect();
+      playCorrect();
       scoreRef.current += 1;
       setScore(scoreRef.current);
+    } else {
+      hapticWrong();
+      playWrong();
     }
     advance(correct, question);
   }, [feedback, deck, currentIndex, inputValue, advance]);
@@ -183,6 +191,8 @@ export default function Game({
     if (feedback) return;
     const question = deck[currentIndex];
     setFeedback('wrong');
+    hapticWrong();
+    playWrong();
     advance(false, question);
   }, [feedback, deck, currentIndex, advance]);
 

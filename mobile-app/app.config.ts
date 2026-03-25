@@ -10,6 +10,7 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
   orientation: 'portrait',
   icon: './assets/icon.png',
   userInterfaceStyle: 'light',
+  plugins: ['expo-notifications'],
   splash: {
     image: './assets/splash-icon.png',
     resizeMode: 'contain',
@@ -17,6 +18,9 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
   },
   ios: {
     supportsTablet: true,
+    infoPlist: {
+      UIBackgroundModes: ['remote-notification'],
+    },
   },
   android: {
     adaptiveIcon: {
