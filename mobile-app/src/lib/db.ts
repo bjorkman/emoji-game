@@ -143,13 +143,13 @@ function generateCode(gameId: string): string {
   return `${prefix}-${suffix}`;
 }
 
-export async function createChallenge(gameId: string, playerId: string): Promise<string | null> {
+export async function createChallenge(gameId: string, playerId: string, seed?: number): Promise<string | null> {
   // Try a few times in case of code collision
   for (let attempt = 0; attempt < 5; attempt++) {
     const code = generateCode(gameId);
     const { data, error } = await supabase
       .from('challenges')
-      .insert({ code, game_id: gameId, created_by: playerId })
+      .insert({ code, game_id: gameId, created_by: playerId, seed: seed ?? null })
       .select('code')
       .single();
     if (!error) return data?.code ?? null;
@@ -161,10 +161,10 @@ export async function createChallenge(gameId: string, playerId: string): Promise
   return null;
 }
 
-export async function fetchChallenge(code: string): Promise<{ id: string; game_id: string } | null> {
+export async function fetchChallenge(code: string): Promise<{ id: string; game_id: string; seed: number | null } | null> {
   const { data, error } = await supabase
     .from('challenges')
-    .select('id, game_id')
+    .select('id, game_id, seed')
     .eq('code', code.toUpperCase())
     .single();
   if (error) {

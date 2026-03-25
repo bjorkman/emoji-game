@@ -11,11 +11,12 @@ interface Props {
   missed: Question[];
   grades: { min: number; label: string }[];
   gameId: string;
+  gameSeed: number | null;
   remoteScoreId?: string;
   onNext: () => void;
 }
 
-export default function ResultScreen({ score, total, missed, grades, gameId, remoteScoreId, onNext }: Readonly<Props>) {
+export default function ResultScreen({ score, total, missed, grades, gameId, gameSeed, remoteScoreId, onNext }: Readonly<Props>) {
   const { theme } = useTheme();
   const pct = Math.round((score / total) * 100);
   const grade = grades.find(g => pct >= g.min) ?? grades.at(-1)!;
@@ -26,14 +27,14 @@ export default function ResultScreen({ score, total, missed, grades, gameId, rem
   const handleChallenge = useCallback(async () => {
     if (!playerId || creating) return;
     setCreating(true);
-    const c = await createChallenge(gameId, playerId);
+    const c = await createChallenge(gameId, playerId, gameSeed ?? undefined);
     if (c && remoteScoreId) {
       const challenge = await fetchChallenge(c);
       if (challenge) await linkScoreToChallenge(remoteScoreId, challenge.id);
     }
     setCode(c);
     setCreating(false);
-  }, [playerId, gameId, remoteScoreId, creating]);
+  }, [playerId, gameId, gameSeed, remoteScoreId, creating]);
 
   const handleShare = useCallback(async () => {
     if (!code) return;

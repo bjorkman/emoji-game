@@ -12,6 +12,7 @@ export type Phase = 'start' | 'playing' | 'result' | 'leaderboard';
 interface Props {
   config: GameConfig;
   challengeId?: string;
+  challengeSeed?: number;
   onGoHome: () => void;
   // Sub-component renderers — injected so Game doesn't import UI components directly
   renderSplash: (props: {
@@ -39,6 +40,7 @@ interface Props {
     missed: Question[];
     grades: GameConfig['grades'];
     gameId: string;
+    gameSeed: number | null;
     remoteScoreId?: string;
     onNext: () => void;
   }) => React.ReactNode;
@@ -54,6 +56,7 @@ interface Props {
 export default function Game({
   config,
   challengeId,
+  challengeSeed,
   onGoHome,
   renderSplash,
   renderPlaying,
@@ -102,7 +105,7 @@ export default function Game({
     elapsedRef.current = 0;
     setScore(0);
     setElapsed(0);
-    const seed = Math.floor(Math.random() * 0x100000000);
+    const seed = challengeSeed ?? Math.floor(Math.random() * 0x100000000);
     gameSeedRef.current = seed;
     if (config.questionCount) {
       setDeck(selectBalancedSubset(config.questions, config.questionCount, seed));
@@ -119,7 +122,7 @@ export default function Game({
       elapsedRef.current += 1;
       setElapsed(elapsedRef.current);
     }, 1000);
-  }, [config.questions, config.questionCount]);
+  }, [config.questions, config.questionCount, challengeSeed]);
 
   const advance = useCallback((wasCorrect: boolean, question: Question) => {
     if (!wasCorrect) setMissed(prev => [...prev, question]);
@@ -204,6 +207,7 @@ export default function Game({
       missed,
       grades: config.grades,
       gameId: config.id,
+      gameSeed: gameSeedRef.current,
       remoteScoreId,
       onNext: () => setPhase('leaderboard'),
     });

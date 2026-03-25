@@ -118,7 +118,11 @@ function ChallengeJoin({ navigation }: Readonly<{ navigation: HomeScreenProps['n
       setError('Challenge not found. Check the code and try again.');
       return;
     }
-    navigation.navigate('Game', { gameId: challenge.game_id, challengeId: challenge.id });
+    navigation.navigate('Game', {
+      gameId: challenge.game_id,
+      challengeId: challenge.id,
+      challengeSeed: challenge.seed ?? undefined,
+    });
   }, [code, navigation]);
 
   if (!playerId) return null;
