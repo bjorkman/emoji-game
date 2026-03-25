@@ -2,8 +2,9 @@ import React, { useState, useCallback } from 'react';
 import { View, Text, TouchableOpacity, ScrollView, Share, StyleSheet, ActivityIndicator } from 'react-native';
 import { type Question, DIFFICULTY_COLORS } from '../core/types';
 import { useAuthStore } from '../store/authStore';
-import { createChallenge, fetchChallenge, linkScoreToChallenge } from '../lib/db';
+import { createChallenge, fetchChallenge, linkScoreToChallenge } from '../services/challengeService';
 import { useTheme } from '../theme/ThemeContext';
+import { hapticSuccess } from '../lib/haptics';
 
 interface Props {
   score: number;
@@ -32,6 +33,7 @@ export default function ResultScreen({ score, total, missed, grades, gameId, rem
       if (challenge) await linkScoreToChallenge(remoteScoreId, challenge.id);
     }
     setCode(c);
+    if (c) hapticSuccess();
     setCreating(false);
   }, [playerId, gameId, remoteScoreId, creating]);
 

@@ -13,9 +13,12 @@ const mockFetchGlobal = jest.fn().mockResolvedValue([]);
 const mockFetchFriends = jest.fn().mockResolvedValue([]);
 const mockFetchChallenge = jest.fn().mockResolvedValue([]);
 
-jest.mock('../../lib/db', () => ({
+jest.mock('../../services/scoreService', () => ({
   fetchGlobalLeaderboard: (...args: any[]) => mockFetchGlobal(...args),
   fetchFriendsLeaderboard: (...args: any[]) => mockFetchFriends(...args),
+}));
+
+jest.mock('../../services/challengeService', () => ({
   fetchChallengeLeaderboard: (...args: any[]) => mockFetchChallenge(...args),
 }));
 

@@ -5,16 +5,11 @@ import {
 } from 'react-native';
 import { type FriendsScreenProps } from '../navigation/types';
 import { useAuthStore } from '../store/authStore';
-import {
-  searchPlayersByNickname,
-  sendFriendRequest,
-  acceptFriendRequest,
-  fetchFriends,
-  fetchMyChallenges,
-  type FriendRow,
-  type ChallengeWithParticipants,
-} from '../lib/db';
+import { searchPlayersByNickname } from '../services/playerService';
+import { sendFriendRequest, acceptFriendRequest, fetchFriends, type FriendRow } from '../services/friendService';
+import { fetchMyChallenges, type ChallengeWithParticipants } from '../services/challengeService';
 import { formatTime } from '../lib/format';
+import { hapticCorrect } from '../lib/haptics';
 
 interface SearchResult {
   id: string;
@@ -66,6 +61,7 @@ export default function FriendsScreen({ navigation }: Readonly<FriendsScreenProp
 
   const handleAccept = useCallback(async (friendshipId: string) => {
     await acceptFriendRequest(friendshipId);
+    hapticCorrect();
     setAcceptedIds(prev => new Set([...prev, friendshipId]));
     await loadFriends();
   }, [loadFriends]);

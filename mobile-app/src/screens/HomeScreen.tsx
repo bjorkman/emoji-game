@@ -7,7 +7,7 @@ import { type HomeScreenProps } from '../navigation/types';
 import REGISTRY from '../games/registry';
 import { usePlayerStore } from '../store/playerStore';
 import { useAuthStore } from '../store/authStore';
-import { fetchChallenge } from '../lib/db';
+import { fetchChallenge } from '../services/challengeService';
 import { formatTime } from '../lib/format';
 import { type GameConfig } from '../core/types';
 
@@ -58,7 +58,7 @@ function GameCardItem({ game, onPress }: Readonly<{ game: GameConfig; onPress: (
       <Text style={styles.cardTitle}>{game.title}</Text>
       <Text style={styles.cardTagline}>{game.tagline}</Text>
       <Text style={styles.cardMeta}>
-        {game.questions.length} questions
+        {game.questionCount ?? game.questions.length} questions
       </Text>
       <Text style={styles.cardCta}>Play</Text>
     </TouchableOpacity>

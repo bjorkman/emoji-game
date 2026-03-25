@@ -13,11 +13,17 @@ const mockAcceptRequest = jest.fn().mockResolvedValue(true);
 const mockFetchFriends = jest.fn().mockResolvedValue([]);
 const mockFetchChallenges = jest.fn().mockResolvedValue([]);
 
-jest.mock('../../lib/db', () => ({
+jest.mock('../../services/playerService', () => ({
   searchPlayersByNickname: (...args: any[]) => mockSearchPlayers(...args),
+}));
+
+jest.mock('../../services/friendService', () => ({
   sendFriendRequest: (...args: any[]) => mockSendRequest(...args),
   acceptFriendRequest: (...args: any[]) => mockAcceptRequest(...args),
   fetchFriends: (...args: any[]) => mockFetchFriends(...args),
+}));
+
+jest.mock('../../services/challengeService', () => ({
   fetchMyChallenges: (...args: any[]) => mockFetchChallenges(...args),
 }));
 

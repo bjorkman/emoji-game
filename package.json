@@ -1,0 +1,9 @@
+{
+  "name": "emoji-game",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "db:push:dev": "supabase link --project-ref imppamlsbedfzputamjf && supabase db push",
+    "db:push:prod": "supabase link --project-ref bnsbcbsjkpwqeqtgtchf && supabase db push"
+  }
+}

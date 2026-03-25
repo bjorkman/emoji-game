@@ -1,10 +1,12 @@
 import { useState, useCallback, useEffect, useRef } from 'react';
 import { type GameConfig, type Question, type Feedback } from './types';
-import { shuffle, isCorrect } from './gameLogic';
+import { seededShuffle, selectBalancedSubset, isCorrect } from './gameLogic';
 import { usePlayerStore } from '../store/playerStore';
 import { useAuthStore } from '../store/authStore';
-import { submitScore } from '../lib/db';
+import { submitScore } from '../services/scoreService';
 import { useTheme } from '../theme/ThemeContext';
+import { hapticCorrect, hapticWrong, hapticSuccess } from '../lib/haptics';
+import { playCorrect, playWrong } from '../lib/sounds';
 import * as Crypto from 'expo-crypto';
 
 export type Phase = 'start' | 'playing' | 'result' | 'leaderboard';
@@ -70,10 +72,10 @@ export default function Game({
   const [elapsed, setElapsed] = useState(0);
   const [latestScoreId, setLatestScoreId] = useState('');
   const [remoteScoreId, setRemoteScoreId] = useState<string | undefined>(undefined);
-
   const scoreRef = useRef(0);
   const elapsedRef = useRef(0);
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
+  const gameSeedRef = useRef<number | null>(null);
 
   const { setTheme } = useTheme();
   const { nickname, addScore } = usePlayerStore();
@@ -102,7 +104,13 @@ export default function Game({
     elapsedRef.current = 0;
     setScore(0);
     setElapsed(0);
-    setDeck(shuffle(config.questions));
+    const seed = Math.floor(Math.random() * 0x100000000);
+    gameSeedRef.current = seed;
+    if (config.questionCount) {
+      setDeck(selectBalancedSubset(config.questions, config.questionCount, seed));
+    } else {
+      setDeck(seededShuffle(config.questions, seed));
+    }
     setCurrentIndex(0);
     setMissed([]);
     setInputValue('');
@@ -113,7 +121,7 @@ export default function Game({
       elapsedRef.current += 1;
       setElapsed(elapsedRef.current);
     }, 1000);
-  }, [config.questions]);
+  }, [config.questions, config.questionCount]);
 
   const advance = useCallback((wasCorrect: boolean, question: Question) => {
     if (!wasCorrect) setMissed(prev => [...prev, question]);
@@ -135,6 +143,7 @@ export default function Game({
           duration: elapsedRef.current,
         });
 
+        hapticSuccess();
         setPhase('result');
         setFeedback(null);
 
@@ -167,8 +176,13 @@ export default function Game({
     const correct = isCorrect(inputValue, question);
     setFeedback(correct ? 'correct' : 'wrong');
     if (correct) {
+      hapticCorrect();
+      playCorrect();
       scoreRef.current += 1;
       setScore(scoreRef.current);
+    } else {
+      hapticWrong();
+      playWrong();
     }
     advance(correct, question);
   }, [feedback, deck, currentIndex, inputValue, advance]);
@@ -177,6 +191,8 @@ export default function Game({
     if (feedback) return;
     const question = deck[currentIndex];
     setFeedback('wrong');
+    hapticWrong();
+    playWrong();
     advance(false, question);
   }, [feedback, deck, currentIndex, advance]);
 
@@ -194,7 +210,7 @@ export default function Game({
   if (phase === 'result') {
     return renderResult({
       score,
-      total: config.questions.length,
+      total: deck.length,
       missed,
       grades: config.grades,
       gameId: config.id,

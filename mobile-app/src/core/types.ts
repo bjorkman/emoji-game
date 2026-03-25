@@ -34,5 +34,6 @@ export interface GameConfig {
   grades: { min: number; label: string }[];
   theme: Theme;
   questions: Question[];
+  questionCount?: number;
   splashCards: { name: string; img: string }[];
 }
