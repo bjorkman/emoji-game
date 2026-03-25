@@ -8,7 +8,7 @@ const kpopConfig: GameConfig = {
   tagline: 'Crack the Idol Code',
   inputPlaceholder: 'Guess the K-pop group…',
   instructions: [
-    ['🃏', '25 groups, emoji clues only'],
+    ['🃏', '40 groups & soloists, emoji clues only'],
     ['⌨️', 'Type your guess, press Enter'],
     ['🏆', 'Three difficulty tiers'],
   ],

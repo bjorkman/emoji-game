@@ -8,7 +8,7 @@ const countriesConfig: GameConfig = {
   tagline: 'Know Your Flags?',
   inputPlaceholder: 'Guess the country…',
   instructions: [
-    ['🏳️', '25 flags, guess the country'],
+    ['🏳️', '40 flags, guess the country'],
     ['⌨️', 'Type your guess, press Enter'],
     ['💡', 'Hint shows first letter after 5s'],
   ],
