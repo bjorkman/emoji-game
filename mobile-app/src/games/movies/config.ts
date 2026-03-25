@@ -27,6 +27,7 @@ const moviesConfig: GameConfig = {
     splashBg:     '#0d0510',
   },
   questions,
+  questionCount: 10,
   splashCards: [],
 };
 

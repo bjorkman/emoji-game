@@ -58,7 +58,7 @@ function GameCardItem({ game, onPress }: Readonly<{ game: GameConfig; onPress: (
       <Text style={styles.cardTitle}>{game.title}</Text>
       <Text style={styles.cardTagline}>{game.tagline}</Text>
       <Text style={styles.cardMeta}>
-        {game.questions.length} questions
+        {game.questionCount ?? game.questions.length} questions
       </Text>
       <Text style={styles.cardCta}>Play</Text>
     </TouchableOpacity>

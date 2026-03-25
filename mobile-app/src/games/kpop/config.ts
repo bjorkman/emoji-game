@@ -27,6 +27,7 @@ const kpopConfig: GameConfig = {
     splashBg:     '#07071a',
   },
   questions,
+  questionCount: 10,
   splashCards: [
     { name: "BLACKPINK",  img: "/groups/blackpink.jpg" },
     { name: "BTS",        img: "/groups/bts.jpg" },

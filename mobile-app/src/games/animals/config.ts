@@ -27,6 +27,7 @@ const animalsConfig: GameConfig = {
     splashBg:     '#060f04',
   },
   questions,
+  questionCount: 10,
   splashCards: [],
 };
 

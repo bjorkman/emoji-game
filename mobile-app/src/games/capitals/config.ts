@@ -27,6 +27,7 @@ const capitalsConfig: GameConfig = {
     splashBg:     '#020c1b',
   },
   questions,
+  questionCount: 10,
   splashCards: [],
 };
 
