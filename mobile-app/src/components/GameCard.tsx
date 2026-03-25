@@ -2,6 +2,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet } from 'react-native';
 import { type Question, type Difficulty, type Feedback, DIFFICULTY_COLORS } from '../core/types';
 import { useTheme } from '../theme/ThemeContext';
+import { hapticSelection } from '../lib/haptics';
 
 const DIFFICULTY_LABELS: Record<Difficulty, string> = { easy: 'Easy', medium: 'Medium', hard: 'Hard' };
 
@@ -77,7 +78,7 @@ export default function GameCard({ question, inputValue, onInputChange, onSubmit
       <View style={styles.buttonRow}>
         <TouchableOpacity
           style={[styles.submitBtn, { backgroundColor: theme.secondary }, (!!feedback || !inputValue.trim()) && styles.btnDisabled]}
-          onPress={onSubmit}
+          onPress={() => { hapticSelection(); onSubmit(); }}
           disabled={!!feedback || !inputValue.trim()}
           testID="submit-btn"
         >
@@ -85,7 +86,7 @@ export default function GameCard({ question, inputValue, onInputChange, onSubmit
         </TouchableOpacity>
         <TouchableOpacity
           style={[styles.skipBtn, !!feedback && styles.btnDisabled]}
-          onPress={onSkip}
+          onPress={() => { hapticSelection(); onSkip(); }}
           disabled={!!feedback}
           testID="skip-btn"
         >

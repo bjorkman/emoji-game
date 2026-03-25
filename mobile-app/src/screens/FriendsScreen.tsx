@@ -15,6 +15,7 @@ import {
   type ChallengeWithParticipants,
 } from '../lib/db';
 import { formatTime } from '../lib/format';
+import { hapticCorrect } from '../lib/haptics';
 
 interface SearchResult {
   id: string;
@@ -66,6 +67,7 @@ export default function FriendsScreen({ navigation }: Readonly<FriendsScreenProp
 
   const handleAccept = useCallback(async (friendshipId: string) => {
     await acceptFriendRequest(friendshipId);
+    hapticCorrect();
     setAcceptedIds(prev => new Set([...prev, friendshipId]));
     await loadFriends();
   }, [loadFriends]);
