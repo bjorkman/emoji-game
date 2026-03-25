@@ -21,15 +21,29 @@ jest.mock('../../lib/supabase', () => ({
   },
 }));
 
-jest.mock('../../lib/db', () => ({
-  fetchFriends: jest.fn().mockResolvedValue([]),
-  fetchMyChallenges: jest.fn().mockResolvedValue([]),
+jest.mock('../../services/playerService', () => ({
+  upsertPlayer: jest.fn().mockResolvedValue(undefined),
   searchPlayersByNickname: jest.fn().mockResolvedValue([]),
+}));
+
+jest.mock('../../services/scoreService', () => ({
+  submitScore: jest.fn().mockResolvedValue(null),
+  fetchGlobalLeaderboard: jest.fn().mockResolvedValue([]),
+  fetchFriendsLeaderboard: jest.fn().mockResolvedValue([]),
+}));
+
+jest.mock('../../services/challengeService', () => ({
+  fetchChallenge: jest.fn().mockResolvedValue(null),
+  createChallenge: jest.fn().mockResolvedValue(null),
+  linkScoreToChallenge: jest.fn().mockResolvedValue(undefined),
+  fetchMyChallenges: jest.fn().mockResolvedValue([]),
+  fetchChallengeLeaderboard: jest.fn().mockResolvedValue([]),
+}));
+
+jest.mock('../../services/friendService', () => ({
+  fetchFriends: jest.fn().mockResolvedValue([]),
   sendFriendRequest: jest.fn().mockResolvedValue(true),
   acceptFriendRequest: jest.fn().mockResolvedValue(true),
-  upsertPlayer: jest.fn().mockResolvedValue(undefined),
-  fetchChallenge: jest.fn().mockResolvedValue(null),
-  submitScore: jest.fn().mockResolvedValue(null),
 }));
 
 describe('AppNavigator', () => {

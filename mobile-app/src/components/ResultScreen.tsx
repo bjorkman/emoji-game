@@ -2,7 +2,7 @@ import React, { useState, useCallback } from 'react';
 import { View, Text, TouchableOpacity, ScrollView, Share, StyleSheet, ActivityIndicator } from 'react-native';
 import { type Question, DIFFICULTY_COLORS } from '../core/types';
 import { useAuthStore } from '../store/authStore';
-import { createChallenge, fetchChallenge, linkScoreToChallenge } from '../lib/db';
+import { createChallenge, fetchChallenge, linkScoreToChallenge } from '../services/challengeService';
 import { useTheme } from '../theme/ThemeContext';
 
 interface Props {

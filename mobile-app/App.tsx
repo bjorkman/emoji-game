@@ -4,6 +4,7 @@ import { NavigationContainer } from '@react-navigation/native';
 import { ThemeProvider } from './src/theme/ThemeContext';
 import { useAuthStore } from './src/store/authStore';
 import AppNavigator from './src/navigation/AppNavigator';
+import UpdateGate from './src/components/UpdateGate';
 
 export default function App() {
   const init = useAuthStore((s) => s.init);
@@ -14,10 +15,12 @@ export default function App() {
 
   return (
     <ThemeProvider>
-      <NavigationContainer>
-        <StatusBar style="light" />
-        <AppNavigator />
-      </NavigationContainer>
+      <UpdateGate>
+        <NavigationContainer>
+          <StatusBar style="light" />
+          <AppNavigator />
+        </NavigationContainer>
+      </UpdateGate>
     </ThemeProvider>
   );
 }

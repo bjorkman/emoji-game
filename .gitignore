@@ -6,3 +6,4 @@ dist/
 *.iml
 .claude/settings.local.json
 .vite/
+supabase/.temp/

@@ -5,15 +5,9 @@ import {
 } from 'react-native';
 import { type FriendsScreenProps } from '../navigation/types';
 import { useAuthStore } from '../store/authStore';
-import {
-  searchPlayersByNickname,
-  sendFriendRequest,
-  acceptFriendRequest,
-  fetchFriends,
-  fetchMyChallenges,
-  type FriendRow,
-  type ChallengeWithParticipants,
-} from '../lib/db';
+import { searchPlayersByNickname } from '../services/playerService';
+import { sendFriendRequest, acceptFriendRequest, fetchFriends, type FriendRow } from '../services/friendService';
+import { fetchMyChallenges, type ChallengeWithParticipants } from '../services/challengeService';
 import { formatTime } from '../lib/format';
 
 interface SearchResult {
