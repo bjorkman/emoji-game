@@ -1,6 +1,6 @@
 import { useState, useCallback, useEffect, useRef } from 'react';
 import { type GameConfig, type Question, type Feedback } from './types';
-import { shuffle, isCorrect } from './gameLogic';
+import { seededShuffle, selectBalancedSubset, isCorrect } from './gameLogic';
 import { usePlayerStore } from '../store/playerStore';
 import { useAuthStore } from '../store/authStore';
 import { submitScore } from '../lib/db';
@@ -70,10 +70,10 @@ export default function Game({
   const [elapsed, setElapsed] = useState(0);
   const [latestScoreId, setLatestScoreId] = useState('');
   const [remoteScoreId, setRemoteScoreId] = useState<string | undefined>(undefined);
-
   const scoreRef = useRef(0);
   const elapsedRef = useRef(0);
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
+  const gameSeedRef = useRef<number | null>(null);
 
   const { setTheme } = useTheme();
   const { nickname, addScore } = usePlayerStore();
@@ -102,7 +102,13 @@ export default function Game({
     elapsedRef.current = 0;
     setScore(0);
     setElapsed(0);
-    setDeck(shuffle(config.questions));
+    const seed = Math.floor(Math.random() * 0x100000000);
+    gameSeedRef.current = seed;
+    if (config.questionCount) {
+      setDeck(selectBalancedSubset(config.questions, config.questionCount, seed));
+    } else {
+      setDeck(seededShuffle(config.questions, seed));
+    }
     setCurrentIndex(0);
     setMissed([]);
     setInputValue('');
@@ -113,7 +119,7 @@ export default function Game({
       elapsedRef.current += 1;
       setElapsed(elapsedRef.current);
     }, 1000);
-  }, [config.questions]);
+  }, [config.questions, config.questionCount]);
 
   const advance = useCallback((wasCorrect: boolean, question: Question) => {
     if (!wasCorrect) setMissed(prev => [...prev, question]);
@@ -194,7 +200,7 @@ export default function Game({
   if (phase === 'result') {
     return renderResult({
       score,
-      total: config.questions.length,
+      total: deck.length,
       missed,
       grades: config.grades,
       gameId: config.id,
