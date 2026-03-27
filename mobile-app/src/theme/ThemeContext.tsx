@@ -7,6 +7,11 @@ const defaultTheme: Theme = {
   secondaryRgb: '167, 139, 250',
   accent: '#38bdf8',
   splashBg: '#07071a',
+  gradientBg: ['#0a0a2e', '#1a0a3e', '#2a1050'],
+  gradientCard: ['#1e1e5a', '#2a1a5e'],
+  gradientAccent: ['#ff6eb4', '#a855f7', '#6366f1'],
+  glowColor: '#ff6ec7',
+  emojiHost: '🤔',
 };
 
 interface ThemeContextValue {

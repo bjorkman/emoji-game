@@ -23,6 +23,12 @@ export interface Theme {
   secondaryRgb: string; // e.g. "167, 139, 250" — for use in rgba()
   accent: string;
   splashBg: string;
+  // Gradient system (Emoji Movie redesign)
+  gradientBg: [string, string, string];      // 3-stop full-screen background
+  gradientCard: [string, string];            // 2-stop card/surface background
+  gradientAccent: [string, string, string];  // 3-stop CTA/button background
+  glowColor: string;                         // neon glow for borders & shadows
+  emojiHost: string;                         // puzzled emoji character for this game
 }
 
 export interface GameConfig {
