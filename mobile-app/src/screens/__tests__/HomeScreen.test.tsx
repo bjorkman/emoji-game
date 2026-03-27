@@ -71,7 +71,7 @@ describe('HomeScreen', () => {
       <HomeScreen navigation={navigation} route={route} />
     );
 
-    expect(getByText('Emoji Games')).toBeTruthy();
+    expect(getByText('Emoji')).toBeTruthy(); // Logo component renders "Emoji" + "Games" as separate Text nodes
     expect(getByText('Playing as TestPlayer')).toBeTruthy();
     // Check that all 5 games appear
     expect(getByText('KMOJI')).toBeTruthy();

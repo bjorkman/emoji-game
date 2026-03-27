@@ -3,6 +3,7 @@ import {
   View, Text, TextInput, TouchableOpacity,
   ScrollView, StyleSheet, ActivityIndicator,
 } from 'react-native';
+import { LinearGradient } from 'expo-linear-gradient';
 import { type HomeScreenProps } from '../navigation/types';
 import REGISTRY from '../games/registry';
 import { usePlayerStore } from '../store/playerStore';
@@ -10,10 +11,13 @@ import { useAuthStore } from '../store/authStore';
 import { fetchChallenge } from '../services/challengeService';
 import { formatTime } from '../lib/format';
 import { type GameConfig } from '../core/types';
+import { useTheme } from '../theme/ThemeContext';
+import Logo from '../components/Logo';
 
 // ─── Nickname Gate ──────────────────────────────────────────────────────────
 
 function NicknameGate() {
+  const { theme } = useTheme();
   const setNickname = usePlayerStore((s) => s.setNickname);
   const [value, setValue] = useState('');
 
@@ -22,7 +26,7 @@ function NicknameGate() {
   }, [value, setNickname]);
 
   return (
-    <View style={styles.nicknameGate}>
+    <LinearGradient colors={theme.gradientBg} style={styles.nicknameGate}>
       <View style={styles.nicknameCard}>
         <Text style={styles.nicknameHeading}>What's your name?</Text>
         <Text style={styles.nicknameSubtext}>We'll remember it for next time.</Text>
@@ -46,7 +50,7 @@ function NicknameGate() {
           <Text style={styles.btnText}>Let's play</Text>
         </TouchableOpacity>
       </View>
-    </View>
+    </LinearGradient>
   );
 }
 
@@ -159,6 +163,7 @@ function ChallengeJoin({ navigation }: Readonly<{ navigation: HomeScreenProps['n
 // ─── Home Screen ────────────────────────────────────────────────────────────
 
 export default function HomeScreen({ navigation }: Readonly<HomeScreenProps>) {
+  const { theme } = useTheme();
   const nickname = usePlayerStore((s) => s.nickname);
   const setNickname = usePlayerStore((s) => s.setNickname);
   const playerId = useAuthStore((s) => s.playerId);
@@ -167,9 +172,11 @@ export default function HomeScreen({ navigation }: Readonly<HomeScreenProps>) {
   if (!nickname?.trim()) return <NicknameGate />;
 
   return (
-    <ScrollView style={styles.page} contentContainerStyle={styles.pageContent}>
+    <View style={styles.page}>
+      <LinearGradient colors={theme.gradientBg} style={StyleSheet.absoluteFill} />
+      <ScrollView style={styles.scroll} contentContainerStyle={styles.pageContent}>
       <View style={styles.header}>
-        <Text style={styles.logo}>Emoji Games</Text>
+        <Logo size="medium" />
         <View style={styles.playerRow}>
           <Text style={styles.playerName}>Playing as {nickname}</Text>
           <TouchableOpacity onPress={() => setNickname('')}>
@@ -195,7 +202,8 @@ export default function HomeScreen({ navigation }: Readonly<HomeScreenProps>) {
 
       <ChallengeJoin navigation={navigation} />
       <ScoresList />
-    </ScrollView>
+      </ScrollView>
+    </View>
   );
 }
 
@@ -203,12 +211,12 @@ export default function HomeScreen({ navigation }: Readonly<HomeScreenProps>) {
 
 const styles = StyleSheet.create({
   // Page
-  page: { flex: 1, backgroundColor: '#0d0d1a' },
+  page: { flex: 1 },
+  scroll: { flex: 1 },
   pageContent: { paddingBottom: 40 },
 
   // Header
   header: { paddingTop: 60, paddingHorizontal: 20, marginBottom: 24 },
-  logo: { fontSize: 32, fontWeight: 'bold', color: '#f0f0f5' },
   playerRow: { flexDirection: 'row', alignItems: 'center', marginTop: 8, gap: 12 },
   playerName: { fontSize: 14, color: '#8888aa' },
   changeBtn: { fontSize: 14, color: '#a78bfa', textDecorationLine: 'underline' },
@@ -229,7 +237,7 @@ const styles = StyleSheet.create({
   cardCta: { fontSize: 14, fontWeight: '600', color: '#a78bfa', marginTop: 12 },
 
   // Nickname Gate
-  nicknameGate: { flex: 1, backgroundColor: '#0d0d1a', justifyContent: 'center', paddingHorizontal: 32 },
+  nicknameGate: { flex: 1, justifyContent: 'center', paddingHorizontal: 32 },
   nicknameCard: { backgroundColor: '#1a1a2e', borderRadius: 20, padding: 32, alignItems: 'center' },
   nicknameHeading: { fontSize: 24, fontWeight: 'bold', color: '#f0f0f5', marginBottom: 8 },
   nicknameSubtext: { fontSize: 14, color: '#8888aa', marginBottom: 24 },

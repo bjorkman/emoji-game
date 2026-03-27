@@ -1,5 +1,6 @@
 import React, { useState, useCallback } from 'react';
 import { View, Text, TouchableOpacity, ScrollView, Share, StyleSheet, ActivityIndicator } from 'react-native';
+import { LinearGradient } from 'expo-linear-gradient';
 import { type Question, DIFFICULTY_COLORS } from '../core/types';
 import { useAuthStore } from '../store/authStore';
 import { createChallenge, fetchChallenge, linkScoreToChallenge } from '../services/challengeService';
@@ -45,7 +46,8 @@ export default function ResultScreen({ score, total, missed, grades, gameId, rem
   }, [code]);
 
   return (
-    <ScrollView style={styles.container} contentContainerStyle={styles.content}>
+    <LinearGradient colors={theme.gradientBg} style={styles.container}>
+    <ScrollView contentContainerStyle={styles.content}>
       <Text style={styles.heading}>Game Over!</Text>
 
       <View style={styles.scoreBlock}>
@@ -108,11 +110,12 @@ export default function ResultScreen({ score, total, missed, grades, gameId, rem
         </View>
       )}
     </ScrollView>
+    </LinearGradient>
   );
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: '#0d0d1a' },
+  container: { flex: 1 },
   content: { paddingHorizontal: 24, paddingTop: 80, paddingBottom: 40, alignItems: 'center' },
   heading: { fontSize: 28, fontWeight: 'bold', color: '#f0f0f5', marginBottom: 24 },
   scoreBlock: { flexDirection: 'row', alignItems: 'baseline', marginBottom: 8 },

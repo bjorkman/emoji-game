@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { View, Text, TouchableOpacity, FlatList, ActivityIndicator, StyleSheet } from 'react-native';
+import { LinearGradient } from 'expo-linear-gradient';
 import { usePlayerStore } from '../store/playerStore';
 import { useAuthStore } from '../store/authStore';
 import { fetchGlobalLeaderboard, fetchFriendsLeaderboard, type LeaderboardEntry } from '../services/scoreService';
@@ -83,7 +84,7 @@ export default function Leaderboard({ gameId, gameTitle, latestId, challengeId, 
   const highlightId = activeTab === 'local' ? latestId : undefined;
 
   return (
-    <View style={styles.container}>
+    <LinearGradient colors={theme.gradientBg} style={styles.container}>
       <Text style={styles.heading}>{gameTitle}</Text>
       <Text style={styles.subheading}>Leaderboard</Text>
 
@@ -164,12 +165,12 @@ export default function Leaderboard({ gameId, gameTitle, latestId, challengeId, 
           <Text style={styles.replayBtnText}>Play Again</Text>
         </TouchableOpacity>
       </View>
-    </View>
+    </LinearGradient>
   );
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: '#0d0d1a', paddingTop: 60 },
+  container: { flex: 1, paddingTop: 60 },
   heading: { fontSize: 24, fontWeight: 'bold', color: '#f0f0f5', textAlign: 'center' },
   subheading: { fontSize: 14, color: '#8888aa', textAlign: 'center', marginBottom: 20 },
   tabs: { flexDirection: 'row', marginHorizontal: 16, marginBottom: 20, gap: 6 },

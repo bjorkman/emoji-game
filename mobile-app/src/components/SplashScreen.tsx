@@ -16,7 +16,7 @@ export default function SplashScreen({ config, onPlay, onChooseGame }: Readonly<
 
   return (
     <LinearGradient
-      colors={[theme.splashBg, '#0d0d1a']}
+      colors={theme.gradientBg}
       style={styles.container}
     >
       <ScrollView contentContainerStyle={styles.content} bounces={false}>
