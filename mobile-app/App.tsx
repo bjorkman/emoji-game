@@ -1,24 +1,21 @@
-import React, { useEffect } from 'react';
+import React, { useState, useCallback, useEffect } from 'react';
 import { StatusBar } from 'expo-status-bar';
 import { NavigationContainer, createNavigationContainerRef } from '@react-navigation/native';
 import { ThemeProvider } from './src/theme/ThemeContext';
 import { useAuthStore } from './src/store/authStore';
 import AppNavigator from './src/navigation/AppNavigator';
 import UpdateGate from './src/components/UpdateGate';
+import AppLoadingScreen from './src/components/AppLoadingScreen';
 import { type RootStackParamList } from './src/navigation/types';
 import { registerForPushNotifications, setupNotificationHandlers } from './src/lib/notifications';
-import { preloadSounds } from './src/lib/sounds';
 
 const navigationRef = createNavigationContainerRef<RootStackParamList>();
 
 export default function App() {
-  const init = useAuthStore((s) => s.init);
   const playerId = useAuthStore((s) => s.playerId);
+  const [appReady, setAppReady] = useState(false);
 
-  useEffect(() => {
-    init();
-    preloadSounds();
-  }, [init]);
+  const handleReady = useCallback(() => setAppReady(true), []);
 
   // Register push token once authenticated
   useEffect(() => {
@@ -31,6 +28,14 @@ export default function App() {
   useEffect(() => {
     return setupNotificationHandlers(navigationRef);
   }, []);
+
+  if (!appReady) {
+    return (
+      <ThemeProvider>
+        <AppLoadingScreen onReady={handleReady} />
+      </ThemeProvider>
+    );
+  }
 
   return (
     <ThemeProvider>

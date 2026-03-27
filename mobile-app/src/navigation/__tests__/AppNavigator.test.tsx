@@ -70,7 +70,7 @@ describe('AppNavigator', () => {
       </NavigationContainer>
     );
 
-    expect(getByText('Emoji Games')).toBeTruthy();
+    expect(getByText('Emoji')).toBeTruthy(); // Logo component renders "Emoji" + "Games" as separate Text nodes
     expect(getByText('Playing as Tester')).toBeTruthy();
   });
 

@@ -3,6 +3,8 @@ import {
   View, Text, TextInput, TouchableOpacity, ScrollView,
   StyleSheet, ActivityIndicator,
 } from 'react-native';
+import { LinearGradient } from 'expo-linear-gradient';
+import { useTheme } from '../theme/ThemeContext';
 import { type FriendsScreenProps } from '../navigation/types';
 import { useAuthStore } from '../store/authStore';
 import { searchPlayersByNickname } from '../services/playerService';
@@ -17,6 +19,7 @@ interface SearchResult {
 }
 
 export default function FriendsScreen({ navigation }: Readonly<FriendsScreenProps>) {
+  const { theme } = useTheme();
   const { playerId } = useAuthStore();
   const [friends, setFriends] = useState<FriendRow[]>([]);
   const [challenges, setChallenges] = useState<ChallengeWithParticipants[]>([]);
@@ -70,7 +73,9 @@ export default function FriendsScreen({ navigation }: Readonly<FriendsScreenProp
   const pending = friends.filter(f => f.status === 'pending');
 
   return (
-    <ScrollView style={styles.page} contentContainerStyle={styles.pageContent}>
+    <View style={styles.page}>
+      <LinearGradient colors={theme.gradientBg} style={StyleSheet.absoluteFill} />
+      <ScrollView style={styles.scroll} contentContainerStyle={styles.pageContent}>
       <View style={styles.header}>
         <TouchableOpacity onPress={() => navigation.goBack()}>
           <Text style={styles.backLink}>← Home</Text>
@@ -198,12 +203,14 @@ export default function FriendsScreen({ navigation }: Readonly<FriendsScreenProp
           ))
         )}
       </View>
-    </ScrollView>
+      </ScrollView>
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
-  page: { flex: 1, backgroundColor: '#0d0d1a' },
+  page: { flex: 1 },
+  scroll: { flex: 1 },
   pageContent: { paddingBottom: 40 },
   header: { paddingTop: 60, paddingHorizontal: 20, marginBottom: 24 },
   backLink: { fontSize: 14, color: '#8888aa', marginBottom: 8 },

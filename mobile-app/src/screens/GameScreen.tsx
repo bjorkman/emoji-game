@@ -1,5 +1,7 @@
 import React, { useEffect } from 'react';
 import { View, TouchableOpacity, Text, StyleSheet, KeyboardAvoidingView, Platform } from 'react-native';
+import { LinearGradient } from 'expo-linear-gradient';
+import { useTheme } from '../theme/ThemeContext';
 import { type GameScreenProps } from '../navigation/types';
 import REGISTRY from '../games/registry';
 import Game from '../core/Game';
@@ -11,6 +13,7 @@ import ResultScreen from '../components/ResultScreen';
 import Leaderboard from '../components/Leaderboard';
 
 export default function GameScreen({ route, navigation }: Readonly<GameScreenProps>) {
+  const { theme } = useTheme();
   const { gameId, challengeId } = route.params;
   const config = REGISTRY[gameId];
 
@@ -33,6 +36,7 @@ export default function GameScreen({ route, navigation }: Readonly<GameScreenPro
         />
       )}
       renderPlaying={(props) => (
+        <LinearGradient colors={theme.gradientBg} style={styles.playingGradient}>
         <KeyboardAvoidingView
           style={styles.playingContainer}
           behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
@@ -63,6 +67,7 @@ export default function GameScreen({ route, navigation }: Readonly<GameScreenPro
             placeholder={props.config.inputPlaceholder}
           />
         </KeyboardAvoidingView>
+        </LinearGradient>
       )}
       renderResult={(props) => (
         <ResultScreen
@@ -89,7 +94,8 @@ export default function GameScreen({ route, navigation }: Readonly<GameScreenPro
 }
 
 const styles = StyleSheet.create({
-  playingContainer: { flex: 1, backgroundColor: '#0d0d1a', paddingTop: 60 },
+  playingGradient: { flex: 1 },
+  playingContainer: { flex: 1, paddingTop: 60 },
   header: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', paddingHorizontal: 20, marginBottom: 16 },
   headerTitle: { fontSize: 20, fontWeight: 'bold', color: '#f0f0f5' },
   cancelBtn: { fontSize: 20, color: '#8888aa', padding: 4 },
