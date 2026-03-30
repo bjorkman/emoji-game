@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import {
   View, Text, TextInput, TouchableOpacity, ScrollView,
-  StyleSheet, ActivityIndicator,
+  StyleSheet,
 } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useTheme } from '../theme/ThemeContext';
@@ -12,6 +12,10 @@ import { sendFriendRequest, acceptFriendRequest, fetchFriends, type FriendRow } 
 import { fetchMyChallenges, type ChallengeWithParticipants } from '../services/challengeService';
 import { formatTime } from '../lib/format';
 import { hapticCorrect } from '../lib/haptics';
+import { getFriendEmoji, CHALLENGE_EMOJIS } from '../core/emojiCharacters';
+import { FONT_REGULAR, FONT_SEMI, FONT_BOLD } from '../lib/fonts';
+import { TEXT_PRIMARY, TEXT_SECONDARY, TEXT_MUTED } from '../theme/colors';
+import { GradientButton, GradientCard } from '../components/shared';
 
 interface SearchResult {
   id: string;
@@ -85,7 +89,10 @@ export default function FriendsScreen({ navigation }: Readonly<FriendsScreenProp
 
       {/* Search */}
       <View style={styles.section}>
-        <Text style={styles.sectionHeading}>Add a Friend</Text>
+        <View style={styles.sectionHeadingRow}>
+          <Text style={styles.sectionEmoji}>🤝</Text>
+          <Text style={styles.sectionHeading}>Add a Friend</Text>
+        </View>
         <View style={styles.searchRow}>
           <TextInput
             style={styles.searchInput}
@@ -99,18 +106,14 @@ export default function FriendsScreen({ navigation }: Readonly<FriendsScreenProp
             returnKeyType="search"
             testID="search-input"
           />
-          <TouchableOpacity
-            style={[styles.searchBtn, (!query.trim() || searching) && styles.btnDisabled]}
+          <GradientButton
+            label={searching ? '...' : 'Search'}
             onPress={handleSearch}
+            colors={theme.gradientAccent}
             disabled={!query.trim() || searching}
+            small
             testID="search-btn"
-          >
-            {searching ? (
-              <ActivityIndicator size="small" color="#fff" />
-            ) : (
-              <Text style={styles.btnText}>Search</Text>
-            )}
-          </TouchableOpacity>
+          />
         </View>
         {searchError ? <Text style={styles.errorNote}>{searchError}</Text> : null}
         {results.map(p => (
@@ -119,9 +122,13 @@ export default function FriendsScreen({ navigation }: Readonly<FriendsScreenProp
             {sentIds.has(p.id) ? (
               <View style={styles.statusBadge}><Text style={styles.statusText}>Sent</Text></View>
             ) : (
-              <TouchableOpacity style={styles.actionBtn} onPress={() => handleSendRequest(p.id)} testID={`add-${p.id}`}>
-                <Text style={styles.actionBtnText}>Add Friend</Text>
-              </TouchableOpacity>
+              <GradientButton
+                label="Add Friend"
+                onPress={() => handleSendRequest(p.id)}
+                colors={theme.gradientAccent}
+                small
+                testID={`add-${p.id}`}
+              />
             )}
           </View>
         ))}
@@ -138,9 +145,13 @@ export default function FriendsScreen({ navigation }: Readonly<FriendsScreenProp
                 <View style={styles.statusBadge}><Text style={styles.statusText}>Accepted</Text></View>
               )}
               {f.direction === 'incoming' && !acceptedIds.has(f.id) && (
-                <TouchableOpacity style={styles.actionBtn} onPress={() => handleAccept(f.id)} testID={`accept-${f.id}`}>
-                  <Text style={styles.actionBtnText}>Accept</Text>
-                </TouchableOpacity>
+                <GradientButton
+                  label="Accept"
+                  onPress={() => handleAccept(f.id)}
+                  colors={theme.gradientAccent}
+                  small
+                  testID={`accept-${f.id}`}
+                />
               )}
               {f.direction !== 'incoming' && (
                 <View style={styles.statusBadge}><Text style={styles.statusText}>Pending</Text></View>
@@ -154,10 +165,14 @@ export default function FriendsScreen({ navigation }: Readonly<FriendsScreenProp
       <View style={styles.section}>
         <Text style={styles.sectionHeading}>Friends ({accepted.length})</Text>
         {accepted.length === 0 ? (
-          <Text style={styles.emptyNote}>No friends yet. Search for players above.</Text>
+          <View style={styles.emptyState}>
+            <Text style={styles.emptyEmoji}>😢</Text>
+            <Text style={styles.emptyNote}>No friends yet. Search for players above.</Text>
+          </View>
         ) : (
           accepted.map(f => (
             <View key={f.id} style={styles.friendRow}>
+              <Text style={styles.friendEmoji}>{getFriendEmoji(f.nickname)}</Text>
               <Text style={styles.friendNickname}>{f.nickname}</Text>
             </View>
           ))
@@ -166,12 +181,18 @@ export default function FriendsScreen({ navigation }: Readonly<FriendsScreenProp
 
       {/* Challenges */}
       <View style={styles.section}>
-        <Text style={styles.sectionHeading}>My Challenges</Text>
+        <View style={styles.sectionHeadingRow}>
+          <Text style={styles.sectionEmoji}>⚔️</Text>
+          <Text style={styles.sectionHeading}>My Challenges</Text>
+        </View>
         {challenges.length === 0 ? (
-          <Text style={styles.emptyNote}>No challenges yet. Finish a game and hit "Challenge Friends".</Text>
+          <View style={styles.emptyState}>
+            <Text style={styles.emptyEmoji}>🤷</Text>
+            <Text style={styles.emptyNote}>No challenges yet. Finish a game and hit "Challenge Friends".</Text>
+          </View>
         ) : (
           challenges.map(c => (
-            <View key={c.id} style={styles.challengeCard}>
+            <GradientCard key={c.id} colors={theme.gradientCard} style={styles.challengeCard}>
               <View style={styles.challengeHeader}>
                 <View style={styles.gameTag}>
                   <Text style={styles.gameTagText}>{c.game_id.toUpperCase()}</Text>
@@ -181,25 +202,31 @@ export default function FriendsScreen({ navigation }: Readonly<FriendsScreenProp
                   {new Date(c.created_at).toLocaleDateString(undefined, { month: 'short', day: 'numeric' })}
                 </Text>
               </View>
-              <TouchableOpacity
-                style={styles.playLink}
+              <GradientButton
+                label="Play"
                 onPress={() => navigation.navigate('Game', { gameId: c.game_id, challengeId: c.id })}
-              >
-                <Text style={styles.playLinkText}>Play</Text>
-              </TouchableOpacity>
+                colors={theme.gradientAccent}
+                small
+                style={styles.playLink}
+              />
               {c.participants.length > 0 && (
                 <View style={styles.participants}>
-                  {c.participants.map((p) => (
-                    <View key={`${p.nickname}-${p.score}`} style={styles.participantRow}>
-                      <Text style={styles.participantName}>{p.nickname}</Text>
-                      <Text style={styles.participantScore}>
-                        {p.score}/{p.total} · {formatTime(p.duration)}
-                      </Text>
-                    </View>
+                  {c.participants.map((p, idx) => (
+                    <React.Fragment key={`${p.nickname}-${p.score}`}>
+                      {idx > 0 && (
+                        <Text style={styles.vsText}>{CHALLENGE_EMOJIS.vs}</Text>
+                      )}
+                      <View style={styles.participantRow}>
+                        <Text style={styles.participantName}>{p.nickname}</Text>
+                        <Text style={styles.participantScore}>
+                          {p.score}/{p.total} · {formatTime(p.duration)}
+                        </Text>
+                      </View>
+                    </React.Fragment>
                   ))}
                 </View>
               )}
-            </View>
+            </GradientCard>
           ))
         )}
       </View>
@@ -213,47 +240,51 @@ const styles = StyleSheet.create({
   scroll: { flex: 1 },
   pageContent: { paddingBottom: 40 },
   header: { paddingTop: 60, paddingHorizontal: 20, marginBottom: 24 },
-  backLink: { fontSize: 14, color: '#8888aa', marginBottom: 8 },
-  pageTitle: { fontSize: 28, fontWeight: 'bold', color: '#f0f0f5' },
+  backLink: { fontSize: 14, color: TEXT_MUTED, marginBottom: 8, fontFamily: FONT_REGULAR },
+  pageTitle: { fontSize: 28, fontFamily: FONT_BOLD, color: TEXT_PRIMARY },
 
   section: { paddingHorizontal: 20, marginBottom: 28 },
-  sectionHeading: { fontSize: 18, fontWeight: '600', color: '#f0f0f5', marginBottom: 12 },
+  sectionHeadingRow: { flexDirection: 'row', alignItems: 'center', gap: 8, marginBottom: 12 },
+  sectionEmoji: { fontSize: 20 },
+  sectionHeading: { fontSize: 18, fontFamily: FONT_SEMI, color: TEXT_PRIMARY, marginBottom: 12 },
 
-  searchRow: { flexDirection: 'row', gap: 8, marginBottom: 8 },
+  searchRow: { flexDirection: 'row', gap: 8, marginBottom: 8, alignItems: 'center' },
   searchInput: {
-    flex: 1, backgroundColor: '#1a1a2e', borderRadius: 12, padding: 14,
-    color: '#f0f0f5', fontSize: 16, borderWidth: 1, borderColor: '#2a2a40',
+    flex: 1, backgroundColor: 'rgba(30, 30, 90, 0.5)', borderRadius: 12, padding: 14,
+    color: TEXT_PRIMARY, fontSize: 16, borderWidth: 1, borderColor: '#303066',
+    fontFamily: FONT_REGULAR,
   },
-  searchBtn: { backgroundColor: '#a78bfa', borderRadius: 12, paddingHorizontal: 20, justifyContent: 'center', alignItems: 'center' },
-  btnText: { color: '#fff', fontSize: 15, fontWeight: '600' },
-  btnDisabled: { opacity: 0.4 },
-  errorNote: { color: '#f87171', fontSize: 13, marginTop: 4 },
+  errorNote: { color: '#f87171', fontSize: 13, marginTop: 4, fontFamily: FONT_REGULAR },
 
   playerRow: {
     flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center',
-    backgroundColor: '#1a1a2e', borderRadius: 12, padding: 14, marginBottom: 8,
+    backgroundColor: 'rgba(30, 30, 90, 0.4)', borderRadius: 12, padding: 14, marginBottom: 8,
   },
-  playerNickname: { fontSize: 15, color: '#f0f0f5', fontWeight: '500' },
-  actionBtn: { backgroundColor: '#a78bfa', borderRadius: 8, paddingHorizontal: 14, paddingVertical: 6 },
-  actionBtnText: { color: '#fff', fontSize: 13, fontWeight: '600' },
+  playerNickname: { fontSize: 15, color: TEXT_PRIMARY, fontFamily: FONT_SEMI },
   statusBadge: { backgroundColor: '#2a2a40', borderRadius: 8, paddingHorizontal: 12, paddingVertical: 4 },
-  statusText: { color: '#8888aa', fontSize: 13 },
+  statusText: { color: TEXT_MUTED, fontSize: 13, fontFamily: FONT_REGULAR },
 
-  emptyNote: { fontSize: 14, color: '#555' },
+  emptyState: { alignItems: 'center', paddingVertical: 16 },
+  emptyEmoji: { fontSize: 48, marginBottom: 8 },
+  emptyNote: { fontSize: 14, color: TEXT_MUTED, textAlign: 'center', fontFamily: FONT_REGULAR },
 
-  friendRow: { backgroundColor: '#1a1a2e', borderRadius: 12, padding: 14, marginBottom: 8 },
-  friendNickname: { fontSize: 15, color: '#f0f0f5' },
+  friendRow: {
+    flexDirection: 'row', alignItems: 'center', gap: 10,
+    backgroundColor: 'rgba(30, 30, 90, 0.4)', borderRadius: 12, padding: 14, marginBottom: 8,
+  },
+  friendEmoji: { fontSize: 20 },
+  friendNickname: { fontSize: 15, color: TEXT_PRIMARY, fontFamily: FONT_SEMI },
 
-  challengeCard: { backgroundColor: '#1a1a2e', borderRadius: 14, padding: 16, marginBottom: 12 },
+  challengeCard: { marginBottom: 12 },
   challengeHeader: { flexDirection: 'row', alignItems: 'center', gap: 10, marginBottom: 8 },
   gameTag: { backgroundColor: '#2a2a40', borderRadius: 6, paddingHorizontal: 8, paddingVertical: 2 },
-  gameTagText: { fontSize: 11, fontWeight: '700', color: '#8888aa' },
-  challengeCode: { fontSize: 15, fontWeight: 'bold', color: '#f0f0f5', letterSpacing: 1 },
-  challengeDate: { fontSize: 12, color: '#555', marginLeft: 'auto' },
-  playLink: { marginBottom: 8 },
-  playLinkText: { color: '#a78bfa', fontWeight: '600', fontSize: 14 },
-  participants: { borderTopWidth: 1, borderTopColor: '#2a2a40', paddingTop: 8 },
+  gameTagText: { fontSize: 11, fontFamily: FONT_BOLD, color: TEXT_MUTED },
+  challengeCode: { fontSize: 15, fontFamily: FONT_BOLD, color: TEXT_PRIMARY, letterSpacing: 1 },
+  challengeDate: { fontSize: 12, color: TEXT_MUTED, marginLeft: 'auto', fontFamily: FONT_REGULAR },
+  playLink: { marginBottom: 8, alignSelf: 'flex-start' },
+  vsText: { fontSize: 16, textAlign: 'center', marginVertical: 4 },
+  participants: { borderTopWidth: 1, borderTopColor: '#303066', paddingTop: 8 },
   participantRow: { flexDirection: 'row', justifyContent: 'space-between', marginBottom: 4 },
-  participantName: { fontSize: 13, color: '#c0c0d0' },
-  participantScore: { fontSize: 13, color: '#8888aa' },
+  participantName: { fontSize: 13, color: TEXT_SECONDARY, fontFamily: FONT_SEMI },
+  participantScore: { fontSize: 13, color: TEXT_MUTED, fontFamily: FONT_REGULAR },
 });

@@ -1,8 +1,12 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet } from 'react-native';
+import { View, Text, TextInput, StyleSheet } from 'react-native';
+import { LinearGradient } from 'expo-linear-gradient';
 import { type Question, type Difficulty, type Feedback, DIFFICULTY_COLORS } from '../core/types';
 import { useTheme } from '../theme/ThemeContext';
 import { hapticSelection } from '../lib/haptics';
+import { FONT_REGULAR, FONT_SEMI } from '../lib/fonts';
+import { BG_DEEP, TEXT_PRIMARY } from '../theme/colors';
+import { GradientButton, GlowCircle, SpeechBubble } from './shared';
 
 const DIFFICULTY_LABELS: Record<Difficulty, string> = { easy: 'Easy', medium: 'Medium', hard: 'Hard' };
 
@@ -27,7 +31,6 @@ export default function GameCard({ question, inputValue, onInputChange, onSubmit
   // Auto-focus input on new question
   useEffect(() => {
     if (!feedback) {
-      // Small delay to allow re-render before focusing
       const timer = setTimeout(() => inputRef.current?.focus(), 100);
       return () => clearTimeout(timer);
     }
@@ -42,17 +45,26 @@ export default function GameCard({ question, inputValue, onInputChange, onSubmit
 
   return (
     <View style={styles.card}>
-      <View style={[styles.difficultyBadge, { backgroundColor: DIFFICULTY_COLORS[question.difficulty] + '20' }]}>
-        <Text style={[styles.difficultyText, { color: DIFFICULTY_COLORS[question.difficulty] }]}>
-          {DIFFICULTY_LABELS[question.difficulty]}
-        </Text>
+      <GlowCircle emoji={theme.emojiHost} size={64} glowColor={theme.glowColor} />
+
+      <View style={styles.difficultyWrap}>
+        <LinearGradient
+          colors={[DIFFICULTY_COLORS[question.difficulty] + '30', DIFFICULTY_COLORS[question.difficulty] + '10']}
+          style={styles.difficultyBadge}
+        >
+          <Text style={[styles.difficultyText, { color: DIFFICULTY_COLORS[question.difficulty] }]}>
+            {DIFFICULTY_LABELS[question.difficulty]}
+          </Text>
+        </LinearGradient>
       </View>
 
-      <View style={styles.emojiDisplay}>
-        {question.clues.map((clue, i) => (
-          <Text key={'clue-' + i} style={styles.emoji}>{clue}</Text>
-        ))}
-      </View>
+      <SpeechBubble bgColor={theme.gradientCard[0] + 'dd'} style={styles.speechBubble}>
+        <View style={styles.emojiDisplay}>
+          {question.clues.map((clue, i) => (
+            <Text key={'clue-' + i} style={styles.emoji}>{clue}</Text>
+          ))}
+        </View>
+      </SpeechBubble>
 
       {question.hint && (
         <View style={[styles.hint, hintVisible && styles.hintVisible]}>
@@ -60,66 +72,76 @@ export default function GameCard({ question, inputValue, onInputChange, onSubmit
         </View>
       )}
 
-      <TextInput
-        ref={inputRef}
-        style={styles.input}
-        value={inputValue}
-        onChangeText={onInputChange}
-        onSubmitEditing={onSubmit}
-        placeholder={placeholder}
-        placeholderTextColor="#555"
-        editable={!feedback}
-        autoCorrect={false}
-        autoCapitalize="none"
-        returnKeyType="go"
-        testID="game-input"
-      />
+      <View style={styles.inputWrap}>
+        <LinearGradient
+          colors={theme.gradientAccent}
+          start={{ x: 0, y: 0 }}
+          end={{ x: 1, y: 0 }}
+          style={styles.inputBorder}
+        >
+          <View style={styles.inputInner}>
+            <TextInput
+              ref={inputRef}
+              style={styles.input}
+              value={inputValue}
+              onChangeText={onInputChange}
+              onSubmitEditing={onSubmit}
+              placeholder={placeholder}
+              placeholderTextColor="#555"
+              editable={!feedback}
+              autoCorrect={false}
+              autoCapitalize="none"
+              returnKeyType="go"
+              testID="game-input"
+            />
+          </View>
+        </LinearGradient>
+      </View>
 
       <View style={styles.buttonRow}>
-        <TouchableOpacity
-          style={[styles.submitBtn, { backgroundColor: theme.secondary }, (!!feedback || !inputValue.trim()) && styles.btnDisabled]}
+        <GradientButton
+          label="Submit"
           onPress={() => { hapticSelection(); onSubmit(); }}
+          colors={theme.gradientAccent}
           disabled={!!feedback || !inputValue.trim()}
           testID="submit-btn"
-        >
-          <Text style={styles.btnText}>Submit</Text>
-        </TouchableOpacity>
-        <TouchableOpacity
-          style={[styles.skipBtn, !!feedback && styles.btnDisabled]}
+          style={styles.submitBtn}
+        />
+        <GradientButton
+          label="Skip"
           onPress={() => { hapticSelection(); onSkip(); }}
+          borderOnly
           disabled={!!feedback}
           testID="skip-btn"
-        >
-          <Text style={styles.btnText}>Skip</Text>
-        </TouchableOpacity>
+          style={styles.skipBtn}
+        />
       </View>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  card: { paddingHorizontal: 20, flex: 1 },
-  difficultyBadge: { alignSelf: 'center', paddingHorizontal: 16, paddingVertical: 4, borderRadius: 12, marginBottom: 16 },
-  difficultyText: { fontSize: 13, fontWeight: '600' },
-  emojiDisplay: { flexDirection: 'row', justifyContent: 'center', flexWrap: 'wrap', gap: 8, marginBottom: 24 },
+  card: { paddingHorizontal: 20, flex: 1, alignItems: 'center' },
+  difficultyWrap: { alignSelf: 'center', marginTop: 12, marginBottom: 16 },
+  difficultyBadge: { paddingHorizontal: 16, paddingVertical: 4, borderRadius: 12 },
+  difficultyText: { fontSize: 13, fontFamily: FONT_SEMI },
+  speechBubble: { width: '100%', marginBottom: 24 },
+  emojiDisplay: { flexDirection: 'row', justifyContent: 'center', flexWrap: 'wrap', gap: 8 },
   emoji: { fontSize: 48 },
   hint: { opacity: 0, alignItems: 'center', marginBottom: 16 },
   hintVisible: { opacity: 1 },
-  hintText: { fontSize: 14, color: '#f59e0b', textAlign: 'center' },
+  hintText: { fontSize: 14, color: '#f59e0b', textAlign: 'center', fontFamily: FONT_REGULAR },
+  inputWrap: { width: '100%', marginBottom: 16 },
+  inputBorder: { borderRadius: 16, padding: 2 },
+  inputInner: { backgroundColor: BG_DEEP, borderRadius: 14 },
   input: {
-    backgroundColor: '#1a1a2e',
-    borderRadius: 14,
     padding: 16,
-    color: '#f0f0f5',
+    color: TEXT_PRIMARY,
     fontSize: 18,
-    borderWidth: 1,
-    borderColor: '#2a2a40',
     textAlign: 'center',
-    marginBottom: 16,
+    fontFamily: FONT_REGULAR,
   },
-  buttonRow: { flexDirection: 'row', gap: 12, justifyContent: 'center' },
-  submitBtn: { borderRadius: 14, paddingVertical: 14, paddingHorizontal: 32, flex: 1, alignItems: 'center' },
-  skipBtn: { backgroundColor: '#2a2a40', borderRadius: 14, paddingVertical: 14, paddingHorizontal: 24, alignItems: 'center' },
-  btnText: { color: '#fff', fontSize: 16, fontWeight: '600' },
-  btnDisabled: { opacity: 0.4 },
+  buttonRow: { flexDirection: 'row', gap: 12, justifyContent: 'center', width: '100%' },
+  submitBtn: { flex: 1 },
+  skipBtn: { flex: 0, paddingHorizontal: 24 },
 });
