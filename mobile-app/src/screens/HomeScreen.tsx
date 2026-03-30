@@ -1,7 +1,7 @@
 import React, { useState, useCallback } from 'react';
 import {
   View, Text, TextInput, TouchableOpacity,
-  ScrollView, StyleSheet, ActivityIndicator,
+  ScrollView, StyleSheet,
 } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { type HomeScreenProps } from '../navigation/types';
@@ -12,7 +12,13 @@ import { fetchChallenge } from '../services/challengeService';
 import { formatTime } from '../lib/format';
 import { type GameConfig } from '../core/types';
 import { useTheme } from '../theme/ThemeContext';
+import { getRecentScoreEmoji } from '../core/emojiCharacters';
+import { FONT_REGULAR, FONT_SEMI, FONT_BOLD } from '../lib/fonts';
+import { TEXT_PRIMARY, TEXT_SECONDARY, TEXT_MUTED, BG_DEEP } from '../theme/colors';
 import Logo from '../components/Logo';
+import { GradientButton, GradientCard, FloatingEmojis } from '../components/shared';
+
+const HOME_FLOATS = ['🎮', '🎯', '🏆', '✨'];
 
 // ─── Nickname Gate ──────────────────────────────────────────────────────────
 
@@ -27,29 +33,43 @@ function NicknameGate() {
 
   return (
     <LinearGradient colors={theme.gradientBg} style={styles.nicknameGate}>
-      <View style={styles.nicknameCard}>
+      <GradientCard glowColor={theme.glowColor} style={styles.nicknameCard}>
+        <Text style={styles.nicknameEmoji}>👋</Text>
         <Text style={styles.nicknameHeading}>What's your name?</Text>
         <Text style={styles.nicknameSubtext}>We'll remember it for next time.</Text>
-        <TextInput
-          style={styles.nicknameInput}
-          placeholder="Enter a nickname..."
-          placeholderTextColor="#555"
-          value={value}
-          onChangeText={setValue}
-          onSubmitEditing={handleSubmit}
-          maxLength={24}
-          autoFocus
-          autoCorrect={false}
-          returnKeyType="go"
-        />
-        <TouchableOpacity
-          style={[styles.nicknameBtn, !value.trim() && styles.btnDisabled]}
+
+        <View style={styles.nicknameInputWrap}>
+          <LinearGradient
+            colors={theme.gradientAccent}
+            start={{ x: 0, y: 0 }}
+            end={{ x: 1, y: 0 }}
+            style={styles.inputBorder}
+          >
+            <View style={styles.inputInner}>
+              <TextInput
+                style={styles.nicknameInput}
+                placeholder="Enter a nickname..."
+                placeholderTextColor="#555"
+                value={value}
+                onChangeText={setValue}
+                onSubmitEditing={handleSubmit}
+                maxLength={24}
+                autoFocus
+                autoCorrect={false}
+                returnKeyType="go"
+              />
+            </View>
+          </LinearGradient>
+        </View>
+
+        <GradientButton
+          label="Let's play"
           onPress={handleSubmit}
+          colors={theme.gradientAccent}
           disabled={!value.trim()}
-        >
-          <Text style={styles.btnText}>Let's play</Text>
-        </TouchableOpacity>
-      </View>
+          style={styles.nicknameBtn}
+        />
+      </GradientCard>
     </LinearGradient>
   );
 }
@@ -58,13 +78,40 @@ function NicknameGate() {
 
 function GameCardItem({ game, onPress }: Readonly<{ game: GameConfig; onPress: () => void }>) {
   return (
-    <TouchableOpacity style={styles.card} onPress={onPress} activeOpacity={0.8}>
-      <Text style={styles.cardTitle}>{game.title}</Text>
-      <Text style={styles.cardTagline}>{game.tagline}</Text>
-      <Text style={styles.cardMeta}>
-        {game.questionCount ?? game.questions.length} questions
-      </Text>
-      <Text style={styles.cardCta}>Play</Text>
+    <TouchableOpacity onPress={onPress} activeOpacity={0.8}>
+      <GradientCard
+        colors={game.theme.gradientCard}
+        glowColor={game.theme.glowColor}
+        style={[
+          styles.card,
+          {
+            borderLeftWidth: 3,
+            borderLeftColor: game.theme.glowColor,
+            shadowColor: game.theme.glowColor,
+            shadowRadius: 8,
+            shadowOpacity: 0.3,
+            shadowOffset: { width: 0, height: 0 },
+          },
+        ]}
+      >
+        <View style={styles.cardContent}>
+          <View style={styles.cardLeft}>
+            <Text style={styles.cardTitle}>{game.title}</Text>
+            <Text style={styles.cardTagline}>{game.tagline}</Text>
+            <Text style={styles.cardMeta}>
+              {game.questionCount ?? game.questions.length} questions
+            </Text>
+            <GradientButton
+              label="Play"
+              onPress={onPress}
+              colors={game.theme.gradientAccent}
+              small
+              style={styles.cardPlayBtn}
+            />
+          </View>
+          <Text style={styles.cardHost}>{game.theme.emojiHost}</Text>
+        </View>
+      </GradientCard>
     </TouchableOpacity>
   );
 }
@@ -82,12 +129,14 @@ function ScoresList() {
       <Text style={styles.sectionHeading}>Recent Scores</Text>
       {recent.map((entry) => {
         const pct = Math.round((entry.score / entry.total) * 100);
+        const emoji = getRecentScoreEmoji(pct);
         const date = new Date(entry.date).toLocaleDateString(undefined, {
           month: 'short',
           day: 'numeric',
         });
         return (
           <View key={entry.id} style={styles.scoreRow}>
+            <Text style={styles.scoreEmoji}>{emoji}</Text>
             <View style={styles.scoreLeft}>
               <Text style={styles.scoreGame}>{entry.gameTitle}</Text>
               <Text style={styles.scoreMeta}>{date} · {formatTime(entry.duration)}</Text>
@@ -106,6 +155,7 @@ function ScoresList() {
 // ─── Challenge Join ─────────────────────────────────────────────────────────
 
 function ChallengeJoin({ navigation }: Readonly<{ navigation: HomeScreenProps['navigation'] }>) {
+  const { theme } = useTheme();
   const playerId = useAuthStore((s) => s.playerId);
   const [code, setCode] = useState('');
   const [error, setError] = useState('');
@@ -129,31 +179,41 @@ function ChallengeJoin({ navigation }: Readonly<{ navigation: HomeScreenProps['n
 
   return (
     <View style={styles.challengeSection}>
-      <Text style={styles.sectionHeading}>Join a Challenge</Text>
+      <View style={styles.challengeHeadingRow}>
+        <Text style={styles.sectionEmoji}>🥊</Text>
+        <Text style={[styles.sectionHeading, { marginBottom: 0 }]}>Join a Challenge</Text>
+      </View>
       <View style={styles.challengeRow}>
-        <TextInput
-          style={styles.challengeInput}
-          placeholder="Enter code (e.g. KPOP-XK7P)"
-          placeholderTextColor="#555"
-          value={code}
-          onChangeText={setCode}
-          onSubmitEditing={handleJoin}
-          maxLength={12}
-          autoCorrect={false}
-          autoCapitalize="characters"
-          returnKeyType="go"
-        />
-        <TouchableOpacity
-          style={[styles.challengeBtn, (!code.trim() || loading) && styles.btnDisabled]}
+        <View style={styles.challengeInputWrap}>
+          <LinearGradient
+            colors={theme.gradientAccent}
+            start={{ x: 0, y: 0 }}
+            end={{ x: 1, y: 0 }}
+            style={styles.inputBorder}
+          >
+            <View style={styles.inputInner}>
+              <TextInput
+                style={styles.challengeInput}
+                placeholder="Enter code (e.g. KPOP-XK7P)"
+                placeholderTextColor="#555"
+                value={code}
+                onChangeText={setCode}
+                onSubmitEditing={handleJoin}
+                maxLength={12}
+                autoCorrect={false}
+                autoCapitalize="characters"
+                returnKeyType="go"
+              />
+            </View>
+          </LinearGradient>
+        </View>
+        <GradientButton
+          label={loading ? '...' : 'Join'}
           onPress={handleJoin}
+          colors={theme.gradientAccent}
           disabled={!code.trim() || loading}
-        >
-          {loading ? (
-            <ActivityIndicator size="small" color="#fff" />
-          ) : (
-            <Text style={styles.btnText}>Join</Text>
-          )}
-        </TouchableOpacity>
+          small
+        />
       </View>
       {error ? <Text style={styles.challengeError}>{error}</Text> : null}
     </View>
@@ -174,6 +234,7 @@ export default function HomeScreen({ navigation }: Readonly<HomeScreenProps>) {
   return (
     <View style={styles.page}>
       <LinearGradient colors={theme.gradientBg} style={StyleSheet.absoluteFill} />
+      <FloatingEmojis emojis={HOME_FLOATS} />
       <ScrollView style={styles.scroll} contentContainerStyle={styles.pageContent}>
       <View style={styles.header}>
         <Logo size="medium" />
@@ -218,90 +279,73 @@ const styles = StyleSheet.create({
   // Header
   header: { paddingTop: 60, paddingHorizontal: 20, marginBottom: 24 },
   playerRow: { flexDirection: 'row', alignItems: 'center', marginTop: 8, gap: 12 },
-  playerName: { fontSize: 14, color: '#8888aa' },
-  changeBtn: { fontSize: 14, color: '#a78bfa', textDecorationLine: 'underline' },
-  friendsLink: { fontSize: 14, color: '#38bdf8', fontWeight: '600' },
+  playerName: { fontSize: 14, color: TEXT_MUTED, fontFamily: FONT_REGULAR },
+  changeBtn: { fontSize: 14, color: '#a78bfa', textDecorationLine: 'underline', fontFamily: FONT_REGULAR },
+  friendsLink: { fontSize: 14, color: '#38bdf8', fontFamily: FONT_SEMI },
 
   // Grid
   grid: { paddingHorizontal: 16, gap: 12 },
-  card: {
-    backgroundColor: '#1a1a2e',
-    borderRadius: 16,
-    padding: 20,
-    borderWidth: 1,
-    borderColor: '#2a2a40',
-  },
-  cardTitle: { fontSize: 20, fontWeight: 'bold', color: '#f0f0f5', marginBottom: 4 },
-  cardTagline: { fontSize: 14, color: '#8888aa', marginBottom: 8 },
-  cardMeta: { fontSize: 12, color: '#555' },
-  cardCta: { fontSize: 14, fontWeight: '600', color: '#a78bfa', marginTop: 12 },
+  card: { padding: 16 },
+  cardContent: { flexDirection: 'row', alignItems: 'center' },
+  cardLeft: { flex: 1 },
+  cardTitle: { fontSize: 20, fontFamily: FONT_BOLD, color: TEXT_PRIMARY, marginBottom: 4 },
+  cardTagline: { fontSize: 14, color: TEXT_MUTED, marginBottom: 8, fontFamily: FONT_REGULAR },
+  cardMeta: { fontSize: 12, color: TEXT_SECONDARY, fontFamily: FONT_REGULAR },
+  cardPlayBtn: { marginTop: 10, alignSelf: 'flex-start' },
+  cardHost: { fontSize: 40, marginLeft: 12 },
 
   // Nickname Gate
   nicknameGate: { flex: 1, justifyContent: 'center', paddingHorizontal: 32 },
-  nicknameCard: { backgroundColor: '#1a1a2e', borderRadius: 20, padding: 32, alignItems: 'center' },
-  nicknameHeading: { fontSize: 24, fontWeight: 'bold', color: '#f0f0f5', marginBottom: 8 },
-  nicknameSubtext: { fontSize: 14, color: '#8888aa', marginBottom: 24 },
+  nicknameCard: { alignItems: 'center', padding: 32 },
+  nicknameEmoji: { fontSize: 48, marginBottom: 12 },
+  nicknameHeading: { fontSize: 24, fontFamily: FONT_BOLD, color: TEXT_PRIMARY, marginBottom: 8 },
+  nicknameSubtext: { fontSize: 14, color: TEXT_MUTED, marginBottom: 24, fontFamily: FONT_REGULAR },
+  nicknameInputWrap: { width: '100%', marginBottom: 16 },
   nicknameInput: {
-    width: '100%',
-    backgroundColor: '#0d0d1a',
-    borderRadius: 12,
     padding: 14,
-    color: '#f0f0f5',
+    color: TEXT_PRIMARY,
     fontSize: 16,
-    borderWidth: 1,
-    borderColor: '#2a2a40',
-    marginBottom: 16,
+    fontFamily: FONT_REGULAR,
   },
-  nicknameBtn: {
-    width: '100%',
-    backgroundColor: '#a78bfa',
-    borderRadius: 12,
-    paddingVertical: 14,
-    alignItems: 'center',
-  },
+  nicknameBtn: { width: '100%' },
+
+  // Shared input styles
+  inputBorder: { borderRadius: 14, padding: 2 },
+  inputInner: { backgroundColor: BG_DEEP, borderRadius: 12 },
 
   // Buttons
-  btnText: { color: '#fff', fontSize: 16, fontWeight: '600' },
   btnDisabled: { opacity: 0.4 },
 
   // Challenge
   challengeSection: { paddingHorizontal: 20, marginTop: 32 },
-  sectionHeading: { fontSize: 18, fontWeight: 'bold', color: '#f0f0f5', marginBottom: 12 },
-  challengeRow: { flexDirection: 'row', gap: 8 },
+  sectionHeading: { fontSize: 18, fontFamily: FONT_BOLD, color: TEXT_PRIMARY, marginBottom: 12 },
+  sectionEmoji: { fontSize: 20 },
+  challengeHeadingRow: { flexDirection: 'row', alignItems: 'center', gap: 8, marginBottom: 12 },
+  challengeRow: { flexDirection: 'row', gap: 8, alignItems: 'center' },
+  challengeInputWrap: { flex: 1 },
   challengeInput: {
-    flex: 1,
-    backgroundColor: '#1a1a2e',
-    borderRadius: 12,
     padding: 14,
-    color: '#f0f0f5',
+    color: TEXT_PRIMARY,
     fontSize: 16,
-    borderWidth: 1,
-    borderColor: '#2a2a40',
+    fontFamily: FONT_REGULAR,
   },
-  challengeBtn: {
-    backgroundColor: '#a78bfa',
-    borderRadius: 12,
-    paddingHorizontal: 20,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  challengeError: { color: '#f87171', fontSize: 13, marginTop: 8 },
+  challengeError: { color: '#f87171', fontSize: 13, marginTop: 8, fontFamily: FONT_REGULAR },
 
   // Scores
   scoresSection: { paddingHorizontal: 20, marginTop: 32 },
   scoreRow: {
     flexDirection: 'row',
-    justifyContent: 'space-between',
     alignItems: 'center',
-    backgroundColor: '#1a1a2e',
+    backgroundColor: 'rgba(30, 30, 90, 0.4)',
     borderRadius: 12,
     padding: 14,
     marginBottom: 8,
   },
-  scoreLeft: {},
+  scoreEmoji: { fontSize: 20, marginRight: 10 },
+  scoreLeft: { flex: 1 },
   scoreRight: { alignItems: 'flex-end' },
-  scoreGame: { fontSize: 14, fontWeight: '600', color: '#f0f0f5' },
-  scoreMeta: { fontSize: 12, color: '#555', marginTop: 2 },
-  scoreValue: { fontSize: 16, fontWeight: 'bold', color: '#f0f0f5' },
-  scorePct: { fontSize: 12, color: '#8888aa' },
+  scoreGame: { fontSize: 14, fontFamily: FONT_SEMI, color: TEXT_PRIMARY },
+  scoreMeta: { fontSize: 12, color: TEXT_MUTED, marginTop: 2, fontFamily: FONT_REGULAR },
+  scoreValue: { fontSize: 16, fontFamily: FONT_BOLD, color: TEXT_PRIMARY },
+  scorePct: { fontSize: 12, color: TEXT_MUTED, fontFamily: FONT_REGULAR },
 });

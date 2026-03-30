@@ -3,6 +3,10 @@ import { View, Text, TouchableOpacity, ScrollView, StyleSheet } from 'react-nati
 import { LinearGradient } from 'expo-linear-gradient';
 import { useTheme } from '../theme/ThemeContext';
 import { type GameConfig } from '../core/types';
+import { FLOATING_EMOJIS } from '../core/emojiCharacters';
+import { FONT_REGULAR, FONT_SEMI, FONT_BOLD } from '../lib/fonts';
+import { TEXT_MUTED, BG_CARD } from '../theme/colors';
+import { GradientButton, GlowCircle, SpeechBubble, FloatingEmojis } from './shared';
 
 interface Props {
   config: GameConfig;
@@ -13,17 +17,34 @@ interface Props {
 export default function SplashScreen({ config, onPlay, onChooseGame }: Readonly<Props>) {
   const { theme } = useTheme();
   const { title, eyebrow, tagline, instructions } = config;
+  const floats = FLOATING_EMOJIS[config.id] ?? [];
 
   return (
     <LinearGradient
       colors={theme.gradientBg}
       style={styles.container}
     >
+      <FloatingEmojis emojis={floats} />
       <ScrollView contentContainerStyle={styles.content} bounces={false}>
+        <GlowCircle emoji={theme.emojiHost} size={56} glowColor={theme.glowColor} />
+
         <Text style={styles.eyebrow}>{eyebrow}</Text>
 
-        <Text style={[styles.title, { color: theme.secondary }]}>{title}</Text>
-        <Text style={styles.tagline}>{tagline}</Text>
+        <Text
+          style={[
+            styles.title,
+            {
+              color: theme.secondary,
+              textShadowColor: theme.glowColor + '80',
+            },
+          ]}
+        >
+          {title}
+        </Text>
+
+        <SpeechBubble bgColor={BG_CARD + 'cc'} style={styles.speechBubble}>
+          <Text style={styles.tagline}>{tagline}</Text>
+        </SpeechBubble>
 
         <View style={styles.instructions}>
           {instructions.map(([icon, text]) => (
@@ -34,14 +55,13 @@ export default function SplashScreen({ config, onPlay, onChooseGame }: Readonly<
           ))}
         </View>
 
-        <TouchableOpacity
-          style={[styles.playBtn, { backgroundColor: theme.secondary }]}
+        <GradientButton
+          label="Play Now"
           onPress={onPlay}
-          activeOpacity={0.8}
+          colors={theme.gradientAccent}
           testID="play-btn"
-        >
-          <Text style={styles.playBtnText}>Play Now</Text>
-        </TouchableOpacity>
+          style={styles.playBtn}
+        />
 
         <TouchableOpacity onPress={onChooseGame} style={styles.chooseBtn}>
           <Text style={styles.chooseBtnText}>Choose Game</Text>
@@ -53,16 +73,59 @@ export default function SplashScreen({ config, onPlay, onChooseGame }: Readonly<
 
 const styles = StyleSheet.create({
   container: { flex: 1 },
-  content: { flexGrow: 1, justifyContent: 'center', alignItems: 'center', paddingHorizontal: 32, paddingVertical: 60 },
-  eyebrow: { fontSize: 14, color: '#8888aa', letterSpacing: 2, textTransform: 'uppercase', marginBottom: 8 },
-  title: { fontSize: 42, fontWeight: 'bold', textAlign: 'center', marginBottom: 8 },
-  tagline: { fontSize: 16, color: '#8888aa', textAlign: 'center', marginBottom: 32 },
+  content: {
+    flexGrow: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    paddingHorizontal: 32,
+    paddingVertical: 60,
+  },
+  eyebrow: {
+    fontSize: 14,
+    color: TEXT_MUTED,
+    letterSpacing: 2,
+    textTransform: 'uppercase',
+    marginBottom: 8,
+    marginTop: 16,
+    fontFamily: FONT_SEMI,
+  },
+  title: {
+    fontSize: 42,
+    fontFamily: FONT_BOLD,
+    textAlign: 'center',
+    marginBottom: 8,
+    textShadowOffset: { width: 0, height: 0 },
+    textShadowRadius: 20,
+  },
+  speechBubble: { marginBottom: 32 },
+  tagline: {
+    fontSize: 16,
+    color: TEXT_MUTED,
+    textAlign: 'center',
+    fontFamily: FONT_REGULAR,
+  },
   instructions: { width: '100%', marginBottom: 40 },
-  instructionRow: { flexDirection: 'row', alignItems: 'center', marginBottom: 12, paddingHorizontal: 8 },
+  instructionRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 12,
+    paddingHorizontal: 12,
+    paddingVertical: 8,
+    backgroundColor: 'rgba(30, 30, 90, 0.5)',
+    borderRadius: 10,
+  },
   instructionIcon: { fontSize: 20, marginRight: 12, width: 28 },
-  instructionText: { fontSize: 15, color: '#c0c0d0', flex: 1 },
-  playBtn: { width: '100%', paddingVertical: 18, borderRadius: 16, alignItems: 'center', marginBottom: 16 },
-  playBtnText: { color: '#fff', fontSize: 18, fontWeight: 'bold' },
+  instructionText: {
+    fontSize: 15,
+    color: '#c0c0d0',
+    flex: 1,
+    fontFamily: FONT_SEMI,
+  },
+  playBtn: { width: '100%', marginBottom: 16 },
   chooseBtn: { paddingVertical: 12 },
-  chooseBtnText: { color: '#8888aa', fontSize: 15 },
+  chooseBtnText: {
+    color: TEXT_MUTED,
+    fontSize: 15,
+    fontFamily: FONT_REGULAR,
+  },
 });
