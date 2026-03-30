@@ -10,7 +10,7 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
   orientation: 'portrait',
   icon: './assets/icon.png',
   userInterfaceStyle: 'light',
-  plugins: ['expo-notifications'],
+  plugins: ['expo-notifications', 'expo-tracking-transparency'],
   splash: {
     image: './assets/splash-icon.png',
     resizeMode: 'contain',
@@ -20,6 +20,8 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
     supportsTablet: true,
     infoPlist: {
       UIBackgroundModes: ['remote-notification'],
+      NSUserTrackingUsageDescription:
+        'This allows us to show you relevant ads. You can play without allowing tracking.',
     },
   },
   android: {
