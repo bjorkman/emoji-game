@@ -8,7 +8,7 @@ import { fetchChallengeLeaderboard } from '../services/challengeService';
 import { formatTime } from '../lib/format';
 import { useTheme } from '../theme/ThemeContext';
 import { FONT_REGULAR, FONT_SEMI, FONT_BOLD } from '../lib/fonts';
-import { TEXT_PRIMARY, TEXT_MUTED } from '../theme/colors';
+import { TEXT_PRIMARY, TEXT_MUTED, PLACEHOLDER_COLOR, BORDER_ROW } from '../theme/colors';
 import { GradientButton } from './shared';
 
 type Tab = 'local' | 'global' | 'friends' | 'challenge';
@@ -108,8 +108,12 @@ export default function Leaderboard({ gameId, gameTitle, latestId, challengeId, 
 
       {!!playerId && (
         <View style={styles.tabs}>
-          {(['local', 'global', 'friends'] as Tab[]).map((t) => {
+          {(challengeId
+            ? (['local', 'global', 'friends', 'challenge'] as Tab[])
+            : (['local', 'global', 'friends'] as Tab[])
+          ).map((t) => {
             const isActive = activeTab === t;
+            const label = t.charAt(0).toUpperCase() + t.slice(1);
             return (
               <TouchableOpacity
                 key={t}
@@ -124,42 +128,16 @@ export default function Leaderboard({ gameId, gameTitle, latestId, challengeId, 
                     end={{ x: 1, y: 0 }}
                     style={styles.tabGradient}
                   >
-                    <Text style={[styles.tabText, styles.tabTextActive]}>
-                      {t.charAt(0).toUpperCase() + t.slice(1)}
-                    </Text>
+                    <Text style={[styles.tabText, styles.tabTextActive]}>{label}</Text>
                   </LinearGradient>
                 ) : (
                   <View style={[styles.tabInactive, { borderColor: theme.glowColor + '40' }]}>
-                    <Text style={styles.tabText}>
-                      {t.charAt(0).toUpperCase() + t.slice(1)}
-                    </Text>
+                    <Text style={styles.tabText}>{label}</Text>
                   </View>
                 )}
               </TouchableOpacity>
             );
           })}
-          {challengeId && (
-            <TouchableOpacity
-              style={styles.tab}
-              onPress={() => setActiveTab('challenge')}
-              testID="tab-challenge"
-            >
-              {activeTab === 'challenge' ? (
-                <LinearGradient
-                  colors={theme.gradientAccent}
-                  start={{ x: 0, y: 0 }}
-                  end={{ x: 1, y: 0 }}
-                  style={styles.tabGradient}
-                >
-                  <Text style={[styles.tabText, styles.tabTextActive]}>Challenge</Text>
-                </LinearGradient>
-              ) : (
-                <View style={[styles.tabInactive, { borderColor: theme.glowColor + '40' }]}>
-                  <Text style={styles.tabText}>Challenge</Text>
-                </View>
-              )}
-            </TouchableOpacity>
-          )}
         </View>
       )}
 
@@ -256,11 +234,11 @@ const styles = StyleSheet.create({
   tabText: { fontSize: 13, color: TEXT_MUTED, fontFamily: FONT_SEMI },
   tabTextActive: { color: TEXT_PRIMARY },
   loader: { marginTop: 40 },
-  empty: { fontSize: 15, color: '#555', textAlign: 'center', marginTop: 40, fontFamily: FONT_REGULAR },
+  empty: { fontSize: 15, color: PLACEHOLDER_COLOR, textAlign: 'center', marginTop: 40, fontFamily: FONT_REGULAR },
   tableHeader: { flexDirection: 'row', paddingHorizontal: 16, paddingBottom: 8, borderBottomWidth: 1, borderBottomColor: '#1a1a2e' },
-  headerCell: { fontSize: 12, color: '#555', fontFamily: FONT_SEMI },
+  headerCell: { fontSize: 12, color: PLACEHOLDER_COLOR, fontFamily: FONT_SEMI },
   list: { flex: 1, paddingHorizontal: 16 },
-  row: { flexDirection: 'row', alignItems: 'center', paddingVertical: 12, paddingHorizontal: 4, borderBottomWidth: 1, borderBottomColor: '#14142a' },
+  row: { flexDirection: 'row', alignItems: 'center', paddingVertical: 12, paddingHorizontal: 4, borderBottomWidth: 1, borderBottomColor: BORDER_ROW },
   cell: { fontSize: 14, color: TEXT_PRIMARY, fontFamily: FONT_REGULAR },
   rankCol: { width: 32 },
   rankText: { fontFamily: FONT_BOLD, color: TEXT_MUTED },

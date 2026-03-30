@@ -1,6 +1,7 @@
 import React from 'react';
 import { type ViewStyle, StyleSheet } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
+import { GRADIENT_CARD_DEFAULT, BORDER_DEFAULT } from '../../theme/colors';
 
 interface Props {
   colors?: [string, string];
@@ -10,7 +11,7 @@ interface Props {
 }
 
 export default function GradientCard({
-  colors = ['#1e1e5a', '#2a1a5e'],
+  colors = GRADIENT_CARD_DEFAULT,
   glowColor,
   style,
   children,
@@ -40,6 +41,6 @@ const styles = StyleSheet.create({
     borderRadius: 16,
     padding: 16,
     borderWidth: 1,
-    borderColor: '#303066',
+    borderColor: BORDER_DEFAULT,
   },
 });

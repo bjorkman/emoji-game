@@ -8,7 +8,7 @@ import { useTheme } from '../theme/ThemeContext';
 import { hapticSuccess } from '../lib/haptics';
 import { getScoreEmoji } from '../core/emojiCharacters';
 import { FONT_REGULAR, FONT_SEMI, FONT_BOLD } from '../lib/fonts';
-import { TEXT_PRIMARY, TEXT_MUTED } from '../theme/colors';
+import { TEXT_PRIMARY, TEXT_MUTED, NEON_PURPLE } from '../theme/colors';
 import { GradientButton, GradientCard, GlowCircle, ConfettiOverlay } from './shared';
 
 interface Props {
@@ -161,7 +161,7 @@ const styles = StyleSheet.create({
   challengeHint: { fontSize: 13, color: TEXT_MUTED, marginBottom: 8, fontFamily: FONT_REGULAR },
   codeRow: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
   codeText: { fontSize: 22, fontFamily: FONT_BOLD, color: TEXT_PRIMARY, letterSpacing: 2 },
-  copyBtn: { backgroundColor: 'rgba(167, 139, 250, 0.2)', borderRadius: 8, paddingHorizontal: 16, paddingVertical: 8 },
+  copyBtn: { backgroundColor: NEON_PURPLE + '33', borderRadius: 8, paddingHorizontal: 16, paddingVertical: 8 },
   copyBtnText: { color: TEXT_PRIMARY, fontFamily: FONT_SEMI },
   missedSection: { width: '100%', marginTop: 16 },
   missedHeading: { fontSize: 18, fontFamily: FONT_SEMI, color: TEXT_PRIMARY, marginBottom: 12 },

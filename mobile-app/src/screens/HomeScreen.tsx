@@ -14,7 +14,7 @@ import { type GameConfig } from '../core/types';
 import { useTheme } from '../theme/ThemeContext';
 import { getRecentScoreEmoji } from '../core/emojiCharacters';
 import { FONT_REGULAR, FONT_SEMI, FONT_BOLD } from '../lib/fonts';
-import { TEXT_PRIMARY, TEXT_SECONDARY, TEXT_MUTED, BG_DEEP } from '../theme/colors';
+import { TEXT_PRIMARY, TEXT_SECONDARY, TEXT_MUTED, BG_DEEP, NEON_PURPLE, NEON_BLUE, BG_CARD_TRANSLUCENT, COLOR_ERROR, PLACEHOLDER_COLOR } from '../theme/colors';
 import Logo from '../components/Logo';
 import { GradientButton, GradientCard, FloatingEmojis } from '../components/shared';
 
@@ -49,7 +49,7 @@ function NicknameGate() {
               <TextInput
                 style={styles.nicknameInput}
                 placeholder="Enter a nickname..."
-                placeholderTextColor="#555"
+                placeholderTextColor={PLACEHOLDER_COLOR}
                 value={value}
                 onChangeText={setValue}
                 onSubmitEditing={handleSubmit}
@@ -195,7 +195,7 @@ function ChallengeJoin({ navigation }: Readonly<{ navigation: HomeScreenProps['n
               <TextInput
                 style={styles.challengeInput}
                 placeholder="Enter code (e.g. KPOP-XK7P)"
-                placeholderTextColor="#555"
+                placeholderTextColor={PLACEHOLDER_COLOR}
                 value={code}
                 onChangeText={setCode}
                 onSubmitEditing={handleJoin}
@@ -280,8 +280,8 @@ const styles = StyleSheet.create({
   header: { paddingTop: 60, paddingHorizontal: 20, marginBottom: 24 },
   playerRow: { flexDirection: 'row', alignItems: 'center', marginTop: 8, gap: 12 },
   playerName: { fontSize: 14, color: TEXT_MUTED, fontFamily: FONT_REGULAR },
-  changeBtn: { fontSize: 14, color: '#a78bfa', textDecorationLine: 'underline', fontFamily: FONT_REGULAR },
-  friendsLink: { fontSize: 14, color: '#38bdf8', fontFamily: FONT_SEMI },
+  changeBtn: { fontSize: 14, color: NEON_PURPLE, textDecorationLine: 'underline', fontFamily: FONT_REGULAR },
+  friendsLink: { fontSize: 14, color: NEON_BLUE, fontFamily: FONT_SEMI },
 
   // Grid
   grid: { paddingHorizontal: 16, gap: 12 },
@@ -329,14 +329,14 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontFamily: FONT_REGULAR,
   },
-  challengeError: { color: '#f87171', fontSize: 13, marginTop: 8, fontFamily: FONT_REGULAR },
+  challengeError: { color: COLOR_ERROR, fontSize: 13, marginTop: 8, fontFamily: FONT_REGULAR },
 
   // Scores
   scoresSection: { paddingHorizontal: 20, marginTop: 32 },
   scoreRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: 'rgba(30, 30, 90, 0.4)',
+    backgroundColor: BG_CARD_TRANSLUCENT,
     borderRadius: 12,
     padding: 14,
     marginBottom: 8,

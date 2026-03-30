@@ -2,7 +2,7 @@ import React from 'react';
 import { Text, TouchableOpacity, StyleSheet, type ViewStyle } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { FONT_BOLD } from '../../lib/fonts';
-import { TEXT_PRIMARY, BORDER_DEFAULT } from '../../theme/colors';
+import { TEXT_PRIMARY, BORDER_DEFAULT, GRADIENT_ACCENT_DEFAULT } from '../../theme/colors';
 
 interface Props {
   label: string;
@@ -26,10 +26,12 @@ export default function GradientButton({
   small = false,
 }: Readonly<Props>) {
   if (borderOnly) {
+    const borderColor = colors?.[0] ?? BORDER_DEFAULT;
     return (
       <TouchableOpacity
         style={[
           styles.borderBtn,
+          { borderColor },
           small && styles.small,
           disabled && styles.disabled,
           style,
@@ -55,7 +57,7 @@ export default function GradientButton({
       style={[disabled && styles.disabled, style]}
     >
       <LinearGradient
-        colors={colors ?? ['#ff6eb4', '#a855f7', '#6366f1']}
+        colors={colors ?? GRADIENT_ACCENT_DEFAULT}
         start={{ x: 0, y: 0 }}
         end={{ x: 1, y: 0 }}
         style={[styles.gradient, small && styles.small]}

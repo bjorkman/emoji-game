@@ -5,7 +5,7 @@ import { useTheme } from '../theme/ThemeContext';
 import { type GameConfig } from '../core/types';
 import { FLOATING_EMOJIS } from '../core/emojiCharacters';
 import { FONT_REGULAR, FONT_SEMI, FONT_BOLD } from '../lib/fonts';
-import { TEXT_MUTED, BG_CARD } from '../theme/colors';
+import { TEXT_MUTED, TEXT_SECONDARY, BG_CARD, BG_CARD_TRANSLUCENT_HEAVY } from '../theme/colors';
 import { GradientButton, GlowCircle, SpeechBubble, FloatingEmojis } from './shared';
 
 interface Props {
@@ -111,13 +111,13 @@ const styles = StyleSheet.create({
     marginBottom: 12,
     paddingHorizontal: 12,
     paddingVertical: 8,
-    backgroundColor: 'rgba(30, 30, 90, 0.5)',
+    backgroundColor: BG_CARD_TRANSLUCENT_HEAVY,
     borderRadius: 10,
   },
   instructionIcon: { fontSize: 20, marginRight: 12, width: 28 },
   instructionText: {
     fontSize: 15,
-    color: '#c0c0d0',
+    color: TEXT_SECONDARY,
     flex: 1,
     fontFamily: FONT_SEMI,
   },

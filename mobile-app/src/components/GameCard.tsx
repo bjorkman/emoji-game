@@ -5,7 +5,7 @@ import { type Question, type Difficulty, type Feedback, DIFFICULTY_COLORS } from
 import { useTheme } from '../theme/ThemeContext';
 import { hapticSelection } from '../lib/haptics';
 import { FONT_REGULAR, FONT_SEMI } from '../lib/fonts';
-import { BG_DEEP, TEXT_PRIMARY } from '../theme/colors';
+import { BG_DEEP, TEXT_PRIMARY, PLACEHOLDER_COLOR, COLOR_MEDIUM } from '../theme/colors';
 import { GradientButton, GlowCircle, SpeechBubble } from './shared';
 
 const DIFFICULTY_LABELS: Record<Difficulty, string> = { easy: 'Easy', medium: 'Medium', hard: 'Hard' };
@@ -87,7 +87,7 @@ export default function GameCard({ question, inputValue, onInputChange, onSubmit
               onChangeText={onInputChange}
               onSubmitEditing={onSubmit}
               placeholder={placeholder}
-              placeholderTextColor="#555"
+              placeholderTextColor={PLACEHOLDER_COLOR}
               editable={!feedback}
               autoCorrect={false}
               autoCapitalize="none"
@@ -130,7 +130,7 @@ const styles = StyleSheet.create({
   emoji: { fontSize: 48 },
   hint: { opacity: 0, alignItems: 'center', marginBottom: 16 },
   hintVisible: { opacity: 1 },
-  hintText: { fontSize: 14, color: '#f59e0b', textAlign: 'center', fontFamily: FONT_REGULAR },
+  hintText: { fontSize: 14, color: COLOR_MEDIUM, textAlign: 'center', fontFamily: FONT_REGULAR },
   inputWrap: { width: '100%', marginBottom: 16 },
   inputBorder: { borderRadius: 16, padding: 2 },
   inputInner: { backgroundColor: BG_DEEP, borderRadius: 14 },

@@ -14,7 +14,7 @@ import { formatTime } from '../lib/format';
 import { hapticCorrect } from '../lib/haptics';
 import { getFriendEmoji, CHALLENGE_EMOJIS } from '../core/emojiCharacters';
 import { FONT_REGULAR, FONT_SEMI, FONT_BOLD } from '../lib/fonts';
-import { TEXT_PRIMARY, TEXT_SECONDARY, TEXT_MUTED } from '../theme/colors';
+import { TEXT_PRIMARY, TEXT_SECONDARY, TEXT_MUTED, BORDER_DEFAULT, BORDER_SUBTLE, BG_CARD_TRANSLUCENT, BG_CARD_TRANSLUCENT_HEAVY, COLOR_ERROR, PLACEHOLDER_COLOR } from '../theme/colors';
 import { GradientButton, GradientCard } from '../components/shared';
 
 interface SearchResult {
@@ -97,7 +97,7 @@ export default function FriendsScreen({ navigation }: Readonly<FriendsScreenProp
           <TextInput
             style={styles.searchInput}
             placeholder="Search by nickname..."
-            placeholderTextColor="#555"
+            placeholderTextColor={PLACEHOLDER_COLOR}
             value={query}
             onChangeText={setQuery}
             onSubmitEditing={handleSearch}
@@ -250,18 +250,18 @@ const styles = StyleSheet.create({
 
   searchRow: { flexDirection: 'row', gap: 8, marginBottom: 8, alignItems: 'center' },
   searchInput: {
-    flex: 1, backgroundColor: 'rgba(30, 30, 90, 0.5)', borderRadius: 12, padding: 14,
-    color: TEXT_PRIMARY, fontSize: 16, borderWidth: 1, borderColor: '#303066',
+    flex: 1, backgroundColor: BG_CARD_TRANSLUCENT_HEAVY, borderRadius: 12, padding: 14,
+    color: TEXT_PRIMARY, fontSize: 16, borderWidth: 1, borderColor: BORDER_DEFAULT,
     fontFamily: FONT_REGULAR,
   },
-  errorNote: { color: '#f87171', fontSize: 13, marginTop: 4, fontFamily: FONT_REGULAR },
+  errorNote: { color: COLOR_ERROR, fontSize: 13, marginTop: 4, fontFamily: FONT_REGULAR },
 
   playerRow: {
     flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center',
-    backgroundColor: 'rgba(30, 30, 90, 0.4)', borderRadius: 12, padding: 14, marginBottom: 8,
+    backgroundColor: BG_CARD_TRANSLUCENT, borderRadius: 12, padding: 14, marginBottom: 8,
   },
   playerNickname: { fontSize: 15, color: TEXT_PRIMARY, fontFamily: FONT_SEMI },
-  statusBadge: { backgroundColor: '#2a2a40', borderRadius: 8, paddingHorizontal: 12, paddingVertical: 4 },
+  statusBadge: { backgroundColor: BORDER_SUBTLE, borderRadius: 8, paddingHorizontal: 12, paddingVertical: 4 },
   statusText: { color: TEXT_MUTED, fontSize: 13, fontFamily: FONT_REGULAR },
 
   emptyState: { alignItems: 'center', paddingVertical: 16 },
@@ -270,20 +270,20 @@ const styles = StyleSheet.create({
 
   friendRow: {
     flexDirection: 'row', alignItems: 'center', gap: 10,
-    backgroundColor: 'rgba(30, 30, 90, 0.4)', borderRadius: 12, padding: 14, marginBottom: 8,
+    backgroundColor: BG_CARD_TRANSLUCENT, borderRadius: 12, padding: 14, marginBottom: 8,
   },
   friendEmoji: { fontSize: 20 },
   friendNickname: { fontSize: 15, color: TEXT_PRIMARY, fontFamily: FONT_SEMI },
 
   challengeCard: { marginBottom: 12 },
   challengeHeader: { flexDirection: 'row', alignItems: 'center', gap: 10, marginBottom: 8 },
-  gameTag: { backgroundColor: '#2a2a40', borderRadius: 6, paddingHorizontal: 8, paddingVertical: 2 },
+  gameTag: { backgroundColor: BORDER_SUBTLE, borderRadius: 6, paddingHorizontal: 8, paddingVertical: 2 },
   gameTagText: { fontSize: 11, fontFamily: FONT_BOLD, color: TEXT_MUTED },
   challengeCode: { fontSize: 15, fontFamily: FONT_BOLD, color: TEXT_PRIMARY, letterSpacing: 1 },
   challengeDate: { fontSize: 12, color: TEXT_MUTED, marginLeft: 'auto', fontFamily: FONT_REGULAR },
   playLink: { marginBottom: 8, alignSelf: 'flex-start' },
   vsText: { fontSize: 16, textAlign: 'center', marginVertical: 4 },
-  participants: { borderTopWidth: 1, borderTopColor: '#303066', paddingTop: 8 },
+  participants: { borderTopWidth: 1, borderTopColor: BORDER_DEFAULT, paddingTop: 8 },
   participantRow: { flexDirection: 'row', justifyContent: 'space-between', marginBottom: 4 },
   participantName: { fontSize: 13, color: TEXT_SECONDARY, fontFamily: FONT_SEMI },
   participantScore: { fontSize: 13, color: TEXT_MUTED, fontFamily: FONT_REGULAR },

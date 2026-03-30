@@ -1,5 +1,6 @@
 import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
+import { NEON_PINK } from '../../theme/colors';
 
 interface Props {
   emoji: string;
@@ -10,7 +11,7 @@ interface Props {
 export default function GlowCircle({
   emoji,
   size = 56,
-  glowColor = '#ff6ec7',
+  glowColor = NEON_PINK,
 }: Readonly<Props>) {
   const circleSize = size + 16;
 

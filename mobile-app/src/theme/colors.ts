@@ -40,3 +40,12 @@ export const COLOR_CORRECT = '#22c55e';
 export const COLOR_CORRECT_BG = 'rgba(34, 197, 94, 0.15)';
 export const COLOR_WRONG = '#ef4444';
 export const COLOR_WRONG_BG = 'rgba(239, 68, 68, 0.15)';
+export const COLOR_ERROR = '#f87171';
+
+// ─── Semi-transparent backgrounds ───────────────────────────────────────────
+export const BG_CARD_TRANSLUCENT = 'rgba(30, 30, 90, 0.4)';
+export const BG_CARD_TRANSLUCENT_HEAVY = 'rgba(30, 30, 90, 0.5)';
+
+// ─── Miscellaneous ──────────────────────────────────────────────────────────
+export const BORDER_ROW = '#14142a';
+export const PLACEHOLDER_COLOR = '#555';

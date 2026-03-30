@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useMemo } from 'react';
 import { StyleSheet, Dimensions } from 'react-native';
 import Animated, {
   useSharedValue,
@@ -67,11 +67,15 @@ function Particle({ emoji, startX, delay }: ParticleProps) {
 }
 
 export default function ConfettiOverlay() {
-  const particles = Array.from({ length: PARTICLE_COUNT }, (_, i) => ({
-    emoji: EMOJIS[i % EMOJIS.length],
-    startX: Math.random() * SCREEN_WIDTH,
-    delay: i * 150,
-  }));
+  const particles = useMemo(
+    () =>
+      Array.from({ length: PARTICLE_COUNT }, (_, i) => ({
+        emoji: EMOJIS[i % EMOJIS.length],
+        startX: Math.random() * SCREEN_WIDTH,
+        delay: i * 150,
+      })),
+    [],
+  );
 
   return (
     <>
