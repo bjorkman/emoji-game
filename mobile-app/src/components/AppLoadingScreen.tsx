@@ -132,6 +132,7 @@ export default function AppLoadingScreen({ onReady }: Readonly<Props>) {
 
   // Run init + sounds in parallel, then wait for min display time
   useEffect(() => {
+    let reloading = false;
     const start = Date.now();
     Promise.all([
       init(),
@@ -139,10 +140,17 @@ export default function AppLoadingScreen({ onReady }: Readonly<Props>) {
       !__DEV__ && Updates.isEnabled
         ? Updates.checkForUpdateAsync()
             .then((r) => (r.isAvailable ? Updates.fetchUpdateAsync() : null))
-            .then((r) => (r ? Updates.reloadAsync() : null))
+            .then((r) => {
+              if (r) {
+                reloading = true;
+                return Updates.reloadAsync();
+              }
+              return null;
+            })
             .catch(() => {})
         : Promise.resolve(),
     ]).finally(() => {
+      if (reloading) return;
       const elapsed = Date.now() - start;
       const remaining = Math.max(0, MIN_DISPLAY_MS - elapsed);
       setTimeout(onReady, remaining);
