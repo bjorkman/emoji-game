@@ -5,6 +5,7 @@ import { ThemeProvider } from './src/theme/ThemeContext';
 import { useAuthStore } from './src/store/authStore';
 import AppNavigator from './src/navigation/AppNavigator';
 import UpdateGate from './src/components/UpdateGate';
+import OTAUpdateBanner from './src/components/OTAUpdateBanner';
 import AppLoadingScreen from './src/components/AppLoadingScreen';
 import { type RootStackParamList } from './src/navigation/types';
 import { registerForPushNotifications, setupNotificationHandlers } from './src/lib/notifications';
@@ -43,6 +44,7 @@ export default function App() {
         <NavigationContainer ref={navigationRef}>
           <StatusBar style="light" />
           <AppNavigator />
+          <OTAUpdateBanner />
         </NavigationContainer>
       </UpdateGate>
     </ThemeProvider>

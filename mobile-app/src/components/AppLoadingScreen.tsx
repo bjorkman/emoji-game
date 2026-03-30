@@ -3,6 +3,7 @@ import { View, StyleSheet, Animated, Dimensions } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useAuthStore } from '../store/authStore';
 import { preloadSounds } from '../lib/sounds';
+import * as Updates from 'expo-updates';
 import { useFonts, Fredoka_700Bold, Fredoka_600SemiBold, Fredoka_400Regular } from '../lib/fonts';
 import Logo from './Logo';
 import { BG_DEEP, NEON_PINK, TEXT_SECONDARY } from '../theme/colors';
@@ -132,7 +133,16 @@ export default function AppLoadingScreen({ onReady }: Readonly<Props>) {
   // Run init + sounds in parallel, then wait for min display time
   useEffect(() => {
     const start = Date.now();
-    Promise.all([init(), preloadSounds()]).finally(() => {
+    Promise.all([
+      init(),
+      preloadSounds(),
+      !__DEV__ && Updates.isEnabled
+        ? Updates.checkForUpdateAsync()
+            .then((r) => (r.isAvailable ? Updates.fetchUpdateAsync() : null))
+            .then((r) => (r ? Updates.reloadAsync() : null))
+            .catch(() => {})
+        : Promise.resolve(),
+    ]).finally(() => {
       const elapsed = Date.now() - start;
       const remaining = Math.max(0, MIN_DISPLAY_MS - elapsed);
       setTimeout(onReady, remaining);

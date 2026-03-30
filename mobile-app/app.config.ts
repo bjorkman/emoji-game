@@ -33,4 +33,18 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
   web: {
     favicon: './assets/favicon.png',
   },
+  runtimeVersion: {
+    policy: 'fingerprint',
+  },
+  updates: {
+    url: 'https://u.expo.dev/79bee6b4-9913-4dd7-a3e1-1082d2b4214d',
+    enabled: !IS_DEV,
+    checkAutomatically: 'ON_LOAD',
+    fallbackToCacheTimeout: 5000,
+  },
+  extra: {
+    eas: {
+      projectId: '79bee6b4-9913-4dd7-a3e1-1082d2b4214d',
+    },
+  },
 });
