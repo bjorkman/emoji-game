@@ -62,8 +62,8 @@ describe('playerStore', () => {
 
   it('prepends new scores (most recent first)', () => {
     const { addScore } = usePlayerStore.getState();
-    addScore({ id: 'a', gameId: 'kpop', gameTitle: 'K-Pop', nickname: 'P', score: 10, total: 25 });
-    addScore({ id: 'b', gameId: 'kpop', gameTitle: 'K-Pop', nickname: 'P', score: 20, total: 25 });
+    addScore({ id: 'a', gameId: 'kpop', gameTitle: 'K-Pop', nickname: 'P', score: 10, total: 25, duration: 60 });
+    addScore({ id: 'b', gameId: 'kpop', gameTitle: 'K-Pop', nickname: 'P', score: 20, total: 25, duration: 45 });
 
     const scores = usePlayerStore.getState().highScores;
     expect(scores[0].id).toBe('b');
@@ -73,7 +73,7 @@ describe('playerStore', () => {
   it('caps highScores at 50 entries', () => {
     const { addScore } = usePlayerStore.getState();
     for (let i = 0; i < 55; i++) {
-      addScore({ id: `s-${i}`, gameId: 'kpop', gameTitle: 'K-Pop', nickname: 'P', score: i, total: 25 });
+      addScore({ id: `s-${i}`, gameId: 'kpop', gameTitle: 'K-Pop', nickname: 'P', score: i, total: 25, duration: 60 });
     }
     expect(usePlayerStore.getState().highScores).toHaveLength(50);
   });

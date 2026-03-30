@@ -8,7 +8,7 @@ export interface ChallengeWithParticipants {
   code: string;
   game_id: string;
   created_at: string;
-  participants: { nickname: string; score: number; total: number; duration: number | null }[];
+  participants: { nickname: string; score: number; total: number; duration: number }[];
 }
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
@@ -141,7 +141,7 @@ export async function fetchChallengeLeaderboard(challengeId: string): Promise<Le
     .select('id, player_id, players(nickname), score, total, duration, created_at')
     .eq('challenge_id', challengeId)
     .order('score', { ascending: false })
-    .order('duration', { ascending: true, nullsFirst: false });
+    .order('duration', { ascending: true });
 
   if (error) {
     console.error('[db] fetchChallengeLeaderboard:', error.message);

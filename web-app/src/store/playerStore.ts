@@ -10,7 +10,7 @@ export interface HighScore {
   nickname: string;
   score: number;
   total: number;
-  duration?: number; // seconds
+  duration: number; // seconds
   date: string;      // ISO string
 }
 

@@ -32,7 +32,7 @@ interface RemoteRow {
   nickname: string;
   score: number;
   total: number;
-  duration: number | null;
+  duration: number;
 }
 
 export default function Leaderboard({ gameId, gameTitle, latestId, challengeId, onReplay }: Readonly<Props>) {
@@ -72,7 +72,7 @@ export default function Leaderboard({ gameId, gameTitle, latestId, challengeId, 
       .filter((s) => s.gameId === gameId)
       .sort((a, b) => {
         if (b.score !== a.score) return b.score - a.score;
-        return (a.duration ?? Infinity) - (b.duration ?? Infinity);
+        return a.duration - b.duration;
       }),
     [highScores, gameId]
   );
@@ -82,7 +82,7 @@ export default function Leaderboard({ gameId, gameTitle, latestId, challengeId, 
 
   const showTabs = !!playerId;
 
-  function renderTable(rows: { id: string; player_id?: string; nickname?: string; score: number; total: number; duration?: number | null }[], currentId?: string) {
+  function renderTable(rows: { id: string; player_id?: string; nickname?: string; score: number; total: number; duration: number }[], currentId?: string) {
     if (rows.length === 0) {
       return <p className={empty}>{loading ? 'Loading…' : 'No scores yet.'}</p>;
     }

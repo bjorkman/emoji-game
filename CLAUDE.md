@@ -135,10 +135,11 @@ Each game's `GameConfig.theme` provides color values (primary, secondary, second
 
 | Table | Purpose |
 |-------|---------|
-| `players` | One row per anon user — id (= auth.users.id), nickname |
+| `players` | One row per anon user — id (= auth.users.id), nickname, push_token |
 | `scores` | Every game result — player_id, game_id, score, total, duration, challenge_id |
 | `challenges` | Share codes — code, game_id, created_by |
 | `friendships` | requester_id, addressee_id, status ('pending' \| 'accepted') |
+| `app_config` | Key-value pairs for version gating (min_version, latest_version) |
 
 All tables have RLS enabled. Users can read global scores/challenges, write only their own rows.
 
