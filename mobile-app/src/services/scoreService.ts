@@ -8,7 +8,7 @@ export interface LeaderboardEntry {
   nickname: string;
   score: number;
   total: number;
-  duration: number | null;
+  duration: number;
   created_at: string;
 }
 
@@ -29,10 +29,9 @@ function mapLeaderboardRow(row: any): LeaderboardEntry {
 export async function submitScore(params: {
   playerId: string;
   gameId: string;
-  gameTitle: string;
   score: number;
   total: number;
-  duration?: number;
+  duration: number;
   challengeId?: string;
 }): Promise<string | null> {
   const { data, error } = await supabase
@@ -40,10 +39,9 @@ export async function submitScore(params: {
     .insert({
       player_id:    params.playerId,
       game_id:      params.gameId,
-      game_title:   params.gameTitle,
       score:        params.score,
       total:        params.total,
-      duration:     params.duration ?? null,
+      duration:     params.duration,
       challenge_id: params.challengeId ?? null,
     })
     .select('id')
@@ -61,7 +59,7 @@ export async function fetchGlobalLeaderboard(gameId: string): Promise<Leaderboar
     .select('id, player_id, players(nickname), score, total, duration, created_at')
     .eq('game_id', gameId)
     .order('score', { ascending: false })
-    .order('duration', { ascending: true, nullsFirst: false })
+    .order('duration', { ascending: true })
     .limit(20);
 
   if (error) {
@@ -95,7 +93,7 @@ export async function fetchFriendsLeaderboard(gameId: string, playerId: string):
     .eq('game_id', gameId)
     .in('player_id', allIds)
     .order('score', { ascending: false })
-    .order('duration', { ascending: true, nullsFirst: false })
+    .order('duration', { ascending: true })
     .limit(20);
 
   if (error) {

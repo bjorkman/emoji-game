@@ -102,7 +102,6 @@ export default function Game({ config, challengeId }: Readonly<Props>) {
           const rid = await submitScore({
             playerId,
             gameId:      config.id,
-            gameTitle:   config.title,
             score:       scoreRef.current,
             total:       deck.length,
             duration:    elapsedRef.current,

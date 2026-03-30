@@ -154,7 +154,6 @@ export default function Game({
           submitScore({
             playerId,
             gameId: config.id,
-            gameTitle: config.title,
             score: scoreRef.current,
             total: deck.length,
             duration: elapsedRef.current,

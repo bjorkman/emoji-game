@@ -71,9 +71,9 @@ describe('db', () => {
       const result = await submitScore({
         playerId: 'p1',
         gameId: 'kpop',
-        gameTitle: 'K-Pop',
         score: 20,
         total: 25,
+        duration: 60,
       });
       expect(supabase.from).toHaveBeenCalledWith('scores');
       expect(result).toBe('score-abc');
