@@ -8,7 +8,7 @@ const moviesConfig: GameConfig = {
   tagline: 'Guess the Film!',
   inputPlaceholder: 'Guess the movie…',
   instructions: [
-    ['🎬', '25 movies, emoji clues only'],
+    ['🎬', '75 movies, emoji clues only'],
     ['⌨️', 'Type your guess, press Enter'],
     ['🏆', 'Three difficulty tiers'],
   ],

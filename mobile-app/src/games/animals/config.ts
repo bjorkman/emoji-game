@@ -8,7 +8,7 @@ const animalsConfig: GameConfig = {
   tagline: 'Wild Guesses Only',
   inputPlaceholder: 'Name the animal…',
   instructions: [
-    ['🐾', '25 animals, emoji clues only'],
+    ['🐾', '75 animals, emoji clues only'],
     ['⌨️', 'Type the animal name, press Enter'],
     ['🏆', 'Three difficulty tiers'],
   ],

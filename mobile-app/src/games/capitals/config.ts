@@ -8,7 +8,7 @@ const capitalsConfig: GameConfig = {
   tagline: 'Know Your Capitals?',
   inputPlaceholder: 'Name the capital city…',
   instructions: [
-    ['🏳️', '25 countries, flag emoji clues'],
+    ['🏳️', '40 countries, flag emoji clues'],
     ['⌨️', 'Type the capital city, press Enter'],
     ['🏆', 'Three difficulty tiers'],
   ],
