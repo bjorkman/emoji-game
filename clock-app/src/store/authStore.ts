@@ -20,7 +20,6 @@ export const useAuthStore = create<AuthStore>((set) => ({
 
     const { data, error } = await supabase.auth.signInAnonymously();
     if (error) {
-      console.error('[auth] Anonymous sign-in failed:', error.message);
       set({ isReady: true });
       return;
     }

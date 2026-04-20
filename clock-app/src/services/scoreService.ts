@@ -19,7 +19,6 @@ export async function submitScore(params: {
     .select('id')
     .single();
   if (error) {
-    console.error('[db] submitScore:', error.message);
     return null;
   }
   return data?.id ?? null;
