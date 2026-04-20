@@ -1,11 +1,10 @@
-import React, { useEffect } from 'react';
+import React, { useCallback, useState } from 'react';
 import { View, StyleSheet } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
 import { NavigationContainer } from '@react-navigation/native';
 import { ThemeProvider } from './src/theme/ThemeContext';
-import { useAuthStore } from './src/store/authStore';
 import AppNavigator from './src/navigation/AppNavigator';
-import { preloadSounds } from './src/lib/sounds';
+import AppSplashScreen from './src/components/AppSplashScreen';
 import {
   useFonts,
   Fredoka_400Regular,
@@ -38,14 +37,16 @@ export default function App() {
     Fredoka_600SemiBold,
     Fredoka_700Bold,
   });
+  const [appReady, setAppReady] = useState(false);
 
-  useEffect(() => {
-    useAuthStore.getState().init();
-    preloadSounds();
-  }, []);
+  const handleReady = useCallback(() => setAppReady(true), []);
 
   if (!fontsLoaded) {
     return <View style={styles.loading} />;
+  }
+
+  if (!appReady) {
+    return <AppSplashScreen onReady={handleReady} />;
   }
 
   return (
