@@ -42,13 +42,14 @@ jest.mock('expo-haptics', () => ({
   NotificationFeedbackType: { Success: 'success', Warning: 'warning', Error: 'error' },
 }));
 
-jest.mock('expo-av', () => ({
-  Audio: {
-    Sound: {
-      createAsync: jest.fn().mockResolvedValue({ sound: { replayAsync: jest.fn() } }),
-    },
-    setAudioModeAsync: jest.fn(),
-  },
+jest.mock('expo-audio', () => ({
+  createAudioPlayer: jest.fn(() => ({
+    play: jest.fn(),
+    pause: jest.fn(),
+    seekTo: jest.fn().mockResolvedValue(undefined),
+    remove: jest.fn(),
+  })),
+  setAudioModeAsync: jest.fn().mockResolvedValue(undefined),
 }));
 
 jest.mock('react-native-svg', () => {

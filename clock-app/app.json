@@ -16,6 +16,9 @@
       "adaptiveIcon": {
         "backgroundColor": "#0a1628"
       }
-    }
+    },
+    "plugins": [
+      "expo-audio"
+    ]
   }
 }
