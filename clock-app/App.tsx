@@ -1,13 +1,13 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { View, StyleSheet } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
+import * as Font from 'expo-font';
 import { NavigationContainer } from '@react-navigation/native';
 import { ThemeProvider } from './src/theme/ThemeContext';
 import { useAuthStore } from './src/store/authStore';
 import AppNavigator from './src/navigation/AppNavigator';
 import { preloadSounds } from './src/lib/sounds';
 import {
-  useFonts,
   Fredoka_400Regular,
   Fredoka_600SemiBold,
   Fredoka_700Bold,
@@ -33,15 +33,22 @@ const navTheme = {
 };
 
 export default function App() {
-  const [fontsLoaded] = useFonts({
-    Fredoka_400Regular,
-    Fredoka_600SemiBold,
-    Fredoka_700Bold,
-  });
+  const [fontsLoaded, setFontsLoaded] = useState(false);
 
   useEffect(() => {
-    useAuthStore.getState().init();
-    preloadSounds();
+    Font.loadAsync({
+      Fredoka_400Regular,
+      Fredoka_600SemiBold,
+      Fredoka_700Bold,
+    })
+      .then(() => setFontsLoaded(true))
+      .catch(() => setFontsLoaded(true)); // proceed without custom fonts
+
+    useAuthStore
+      .getState()
+      .init()
+      .catch((e: unknown) => console.error('[auth] init failed:', e));
+    preloadSounds().catch(() => {});
   }, []);
 
   if (!fontsLoaded) {

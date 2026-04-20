@@ -1,12 +1,5 @@
-import React, { useEffect } from 'react';
-import { StyleSheet, Dimensions } from 'react-native';
-import Animated, {
-  useSharedValue,
-  useAnimatedStyle,
-  withTiming,
-  withDelay,
-  Easing,
-} from 'react-native-reanimated';
+import React, { useEffect, useRef } from 'react';
+import { StyleSheet, Dimensions, Animated, Easing } from 'react-native';
 
 const EMOJIS = ['🎉', '✨', '🌟', '💫', '🥳', '🎊', '⭐', '💥', '🔥', '🏆'];
 const PARTICLE_COUNT = 20;
@@ -19,46 +12,63 @@ interface ParticleProps {
 }
 
 function Particle({ emoji, startX, delay }: ParticleProps) {
-  const translateY = useSharedValue(-40);
-  const translateX = useSharedValue(0);
-  const opacity = useSharedValue(1);
-  const rotate = useSharedValue(0);
+  const translateY = useRef(new Animated.Value(-40)).current;
+  const translateX = useRef(new Animated.Value(0)).current;
+  const opacity = useRef(new Animated.Value(1)).current;
+  const rotate = useRef(new Animated.Value(0)).current;
 
   useEffect(() => {
     const drift = (Math.random() - 0.5) * 80;
-    translateY.value = withDelay(
-      delay,
-      withTiming(SCREEN_HEIGHT + 40, { duration: 3000, easing: Easing.in(Easing.quad) }),
-    );
-    translateX.value = withDelay(
-      delay,
-      withTiming(drift, { duration: 3000, easing: Easing.inOut(Easing.ease) }),
-    );
-    opacity.value = withDelay(
-      delay + 2000,
-      withTiming(0, { duration: 1000 }),
-    );
-    rotate.value = withDelay(
-      delay,
-      withTiming(360 * (Math.random() > 0.5 ? 1 : -1), { duration: 3000 }),
-    );
+    const direction = Math.random() > 0.5 ? 1 : -1;
+
+    Animated.parallel([
+      Animated.timing(translateY, {
+        toValue: SCREEN_HEIGHT + 40,
+        duration: 3000,
+        delay,
+        easing: Easing.in(Easing.quad),
+        useNativeDriver: true,
+      }),
+      Animated.timing(translateX, {
+        toValue: drift,
+        duration: 3000,
+        delay,
+        easing: Easing.inOut(Easing.ease),
+        useNativeDriver: true,
+      }),
+      Animated.timing(opacity, {
+        toValue: 0,
+        duration: 1000,
+        delay: delay + 2000,
+        useNativeDriver: true,
+      }),
+      Animated.timing(rotate, {
+        toValue: 360 * direction,
+        duration: 3000,
+        delay,
+        useNativeDriver: true,
+      }),
+    ]).start();
   }, [delay, translateY, translateX, opacity, rotate]);
 
-  const animStyle = useAnimatedStyle(() => ({
-    transform: [
-      { translateY: translateY.value },
-      { translateX: translateX.value },
-      { rotate: `${rotate.value}deg` },
-    ],
-    opacity: opacity.value,
-  }));
+  const rotateInterp = rotate.interpolate({
+    inputRange: [-360, 360],
+    outputRange: ['-360deg', '360deg'],
+  });
 
   return (
     <Animated.Text
       style={[
         styles.particle,
-        { left: startX },
-        animStyle,
+        {
+          left: startX,
+          transform: [
+            { translateY },
+            { translateX },
+            { rotate: rotateInterp },
+          ],
+          opacity,
+        },
       ]}
     >
       {emoji}
